@@ -26,6 +26,12 @@ from typing import Any
 
 import requests
 
+try:  # many school sites serve an incomplete TLS chain; the OS trust store resolves it (like Chrome), certifi does not
+    import truststore
+    truststore.inject_into_ssl()
+except ImportError:
+    pass
+
 from .workspace import Workspace
 
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) StudyProduct/0.1"

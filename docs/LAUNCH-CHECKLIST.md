@@ -10,7 +10,7 @@
 - [ ] OWNER: green light for the one-time costs that cannot be avoided (domain; Chrome Web Store fee if Chrome is wanted; Edge and Firefox are free)
 - [ ] OWNER: Cloudflare account for the free Worker (api/) + KV + D1 created; `wrangler.toml` ids and origins filled; secrets set with `wrangler secret put`
 - [ ] OWNER: transactional e-mail sender (Resend free tier, 100/day) verified for the domain; `MAIL_FROM` set
-- [ ] Route B proved at the owner's school: one course, one assessment, one deadline and one file collected by the extension into the connector; expired-session and missing-capability paths tested (collab consensus 2026-09-12)
+- [ ] Route B proved at the owner's school END TO END through the extension into the connector (engine path PROVED 2026-09-12 with the saved session: probe, 5 courses, calendar, notifications, geography mirrored 21 sections / 58 modules / 50 files / 0 errors in 17 s; `tool_mobile_get_public_config` confirms the mobile service is off there); expired-session and missing-capability paths still to test (collab consensus 2026-09-12)
 - [ ] Route A proved on a Moodle site with the mobile service ON (token minted by the site, only the token stored)
 - [ ] Production front-end deployed on Cloudflare Workers static assets (GitHub Pages hosts the demo only - its terms forbid commercial SaaS)
 - [ ] Client-side blob encryption in the web app (AES-GCM, device-derived key) before any user blob is uploaded

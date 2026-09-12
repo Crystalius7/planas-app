@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'none'; base-uri 'none'">
+<title>Planas Privacy</title>
+<link rel="stylesheet" href="../app/app.css">
+<link rel="stylesheet" href="legal.css">
+</head>
+<body>
+<header class="top"><div class="brand"><span class="logo" aria-hidden="true"></span><a href="../index.html">Planas</a></div></header>
+<main class="doc">
+<h1>Privacy policy</h1>
+<p class="muted">Draft v0.1 · 2026-09-12 · Not yet in force. The final text will name the controller (a sole trader registered in Lithuania), the contact e-mail and the effective date.</p>
+
+<h2>The short version</h2>
+<ul>
+<li>Your Moodle password, session and access token never reach us. They stay in your browser or on your computer.</li>
+<li>Your course files, videos and study content stay on your computer unless you choose the cloud plan for preparing material, and then only for that purpose, described below.</li>
+<li>We keep the minimum for an account: your e-mail, your plan and trial dates, settings you save, and an encrypted copy of your plan and progress that we cannot read.</li>
+<li>No advertising, no selling of data, no tracking across sites. Usage statistics are shared only if you switch them on.</li>
+<li>You can delete everything with one button.</li>
+</ul>
+
+<h2>1. Who is responsible</h2>
+<p>The controller is the provider named in the Terms (a sole trader registered in Lithuania). Your school remains the controller of the data on its Moodle site; we process what you, the student, choose to read from it through your own access, on your instruction (GDPR Article 6(1)(b), performance of the contract with you). We do not act for or on behalf of your school.</p>
+
+<h2>2. What we process and where</h2>
+<table>
+<tr><th>Data</th><th>Where it is processed</th><th>Purpose</th><th>Kept</th></tr>
+<tr><td>Moodle password</td><td>Never with us. The password route sends it to your school's own login endpoint from your device and keeps only the token it returns.</td><td>—</td><td>—</td></tr>
+<tr><td>Moodle session / access token</td><td>Your browser (extension) or your computer (the local app), file restricted to your user</td><td>Reading your courses, deadlines and notifications</td><td>Until you disconnect; tokens expire per your school's settings</td></tr>
+<tr><td>Course materials, videos, transcripts, the study content built from them</td><td>Your computer (the local app's workspace folder)</td><td>Your private study</td><td>Until you delete the folder or disconnect</td></tr>
+<tr><td>Account e-mail, plan, trial dates, consent choices</td><td>Our hosted API (Cloudflare, EU/US edge; contract-based safeguards for transfers, see §5)</td><td>Sign-in by e-mail link, subscription, trial limits</td><td>Until you delete the account; then removed within 30 days including backups</td></tr>
+<tr><td>Hashed Moodle identity (a one-way fingerprint of your site + user id)</td><td>Our hosted API</td><td>One free trial per student</td><td>12 months</td></tr>
+<tr><td>Plan, progress, settings (cloud sync)</td><td>Our hosted API, encrypted on your device before upload; we hold ciphertext only</td><td>Using the app on more than one device</td><td>Until you delete them or the account</td></tr>
+<tr><td>Bug and feature reports</td><td>Our hosted API</td><td>Fixing and improving the app</td><td>24 months</td></tr>
+<tr><td>Usage statistics (only if you switch "Help improve the app" on)</td><td>Our hosted API</td><td>Improving the app; event names, counts and error classes only — never your name, school, course content, grades or Moodle identity</td><td>24 months, aggregated</td></tr>
+<tr><td>Payment data</td><td>Our merchant of record (named at checkout), as an independent controller</td><td>Billing, tax, invoicing</td><td>Per their policy and tax law</td></tr>
+<tr><td>Country code from your connection</td><td>Computed by our API on each request to pick a default language; not stored</td><td>Default language</td><td>Not stored</td></tr>
+</table>
+
+<h2>3. The optional cloud plan for preparing material</h2>
+<p>If you choose the paid plan's cloud preparation, the text of the course material you select is sent to our processing service and to an AI model provider under contract with us, solely to produce your study content, and is deleted from our systems when the job finishes. We tell you which provider is used in the app before you switch it on. If you do not want this, use the local options: the baseline (no AI) or an AI model running on your own computer.</p>
+
+<h2>4. Children</h2>
+<p>If you are under the digital-consent age of your country (14 in Lithuania), a parent or guardian must confirm your account; we send the confirmation link to the parent's e-mail you give us and keep only a record that it was confirmed. We do not profile children for advertising and we show no advertising to anyone.</p>
+
+<h2>5. Where data is stored and transfers</h2>
+<p>Our hosted API runs on Cloudflare's network; account data is stored in their EU-eligible data locations where available, and transfers outside the EU are covered by the EU standard contractual clauses and, for US providers, the EU–US Data Privacy Framework where the provider is certified. Course materials are never transferred by us; they stay on your device.</p>
+
+<h2>6. Your rights</h2>
+<p>You can access, correct, export and delete your data. Deleting your account (Settings → "Delete my account and all its data") removes the account, the encrypted blobs and push subscriptions immediately and from backups within 30 days. Local data is a folder on your computer that you can delete yourself. You may withdraw the usage-statistics consent at any time with the same switch. You can complain to the Lithuanian State Data Protection Inspectorate (VDAI) or your local authority.</p>
+
+<h2>7. Security</h2>
+<p>HTTPS everywhere; sign-in by single-use e-mail links; a strict content-security policy on every page; no third-party scripts; the local app listens only on your own computer; credentials are stored in a file readable only by your user; hosted data is encrypted on your device before upload. Details: the security page of our source repository.</p>
+
+<h2>8. Changes</h2>
+<p>We will announce material changes in the app and by e-mail at least 30 days before they take effect.</p>
+
+<p class="muted">Related: <a href="terms.html">Terms</a> · <a href="ai.html">How AI is used</a></p>
+</main>
+<footer class="foot">Works with Moodle™. Not affiliated with or endorsed by Moodle Pty Ltd.</footer>
+</body>
+</html>
