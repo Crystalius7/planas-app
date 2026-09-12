@@ -13,7 +13,7 @@ The yearly price front-loads cash and halves churn handling.
 
 ## Provider (recommendation)
 
-**Creem** (merchant of record: they collect VAT everywhere, we invoice nobody; 3.9 % + 0.40 €; natural persons accepted;
+**Creem** (merchant of record: they collect VAT everywhere, we invoice nobody; 3.9 % + 0.40 $ — dollars, about 0.37 €; natural persons accepted;
 Lithuania supported; 24-48 h approval; 50 € payout floor) - and apply to **Stripe Managed Payments** in parallel (cheaper
 per EEA card, also files VAT, eligibility review). Not Paddle (products under 10 $ need a special deal, 100 € payout floor),
 not Gumroad (about 20 % of a 5 € sale), not Stripe Billing alone (we would file EU OSS VAT ourselves; Stripe Tax filing

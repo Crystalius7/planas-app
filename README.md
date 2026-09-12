@@ -4,6 +4,7 @@ Every test, every deadline, every new file from a student's own Moodle in one pl
 for the next in-person test or exam. Any subject, any language. The student's Moodle password never reaches our servers.
 
 > Status: **unpublished local pilot.** Nothing is sold yet; `release.json` says `finished: false`.
+> Demo (sample data, no account): https://crystalius7.github.io/planas-app/ · Code: https://github.com/Crystalius7/planas-app
 > Not affiliated with or endorsed by Moodle Pty Ltd. "Moodle" is a trademark of Moodle Pty Ltd.
 
 ## What is in this repository
@@ -11,7 +12,7 @@ for the next in-person test or exam. Any subject, any language. The student's Mo
 | Folder | What it is |
 |---|---|
 | `engine/studycore/` | The study engine (Python). `vendor/` holds one-way synced copies of the owner's personal study tools; the rest are thin adapters: sliders, grade scales, subject shapes, collectors, digest, notifications, rendering. |
-| `connector/` | The local app: a small HTTP API on 127.0.0.1 that the web app and the browser extension talk to. Everything runs and stays on the student's computer. |
+| `connector/` | The local app: a small HTTP API on 127.0.0.1 that the web app and the browser extension talk to. Everything runs and stays on the student's computer, with one disclosed exception: the optional paid cloud digest sends the selected material text to a model provider (privacy policy §3). |
 | `extension/` | MV3 browser extension: collects courses, deadlines and files from the Moodle tab the student is logged into and hands them to the connector. |
 | `web/` | The web app (static): landing page, dashboard, daily study hub, translations, legal pages. Runs in demo mode without an account. |
 | `api/` | The hosted API for accounts, trials, subscriptions and encrypted per-user blobs: one Cloudflare Worker on the free plan. Not deployed yet. |

@@ -174,7 +174,9 @@ async function route(req, env, url, p) {
     const u = await user(env, s.email);
     if (u.plan !== 'none' || u.trialEndsAt) return json({ error: 'a trial was already used on this account' }, 409);
     if (fp && (await env.KV.get(`trialfp:${fp}`))) return json({ error: 'a trial was already used for this Moodle account' }, 409);
-    if (!(await rateLimit(env, `trial:${ip}`, 3, 86400))) return json({ error: 'too many trials from this network today' }, 429);
+    // IP is a SIGNAL, not an entitlement (decision review 2026-09-12: classmates share school Wi-Fi): a high daily cap stops
+    // scripted farming, and the count is kept for review instead of refusing the 4th student on the same network
+    if (!(await rateLimit(env, `trial:${ip}`, 25, 86400))) return json({ error: 'too many trials from this network today' }, 429);
     const ends = new Date(Date.now() + 7 * 86400 * 1000).toISOString();
     await env.DB.prepare('UPDATE users SET plan = ?, trial_ends_at = ?, trial_fp = ? WHERE id = ?').bind('trial', ends, fp || null, u.id).run();
     if (fp) await env.KV.put(`trialfp:${fp}`, u.id, { expirationTtl: 60 * 60 * 24 * 365 });

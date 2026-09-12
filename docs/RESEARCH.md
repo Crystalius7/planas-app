@@ -56,8 +56,9 @@ Route-B-only.
 
 ## 3. Payments, trials, hosting, AI (verified 2026-09-12)
 
-**Payments (5 € ticket, Lithuanian sole trader).** Creem (Estonian MoR): 3.9 % + 0.40 € ≈ 0.60 €, accepts natural
-persons, Lithuania supported, 24–48 h approval, 50 € payout floor ([pricing](https://www.creem.io/pricing), [countries](https://docs.creem.io/merchant-of-record/supported-countries)).
+**Payments (5 € ticket, Lithuanian sole trader).** Creem (Estonian MoR): 3.9 % + **0.40 $** (advertised in dollars;
+≈ 0.37 € — decision review 2026-09-12 caught the currency) ≈ 0.57 € on a 5 € charge, accepts natural persons, Lithuania
+supported, 24–48 h approval, 50 € payout floor ([pricing](https://www.creem.io/pricing), [countries](https://docs.creem.io/merchant-of-record/supported-countries)).
 Stripe Managed Payments: files VAT in 80+ countries incl. LT, ≈ 0.54 € all-in on EEA cards, eligibility review, no custom
 checkout domain ([managed payments](https://stripe.com/managed-payments)). Polar ≈ 0.78 €; Lemon Squeezy ≈ 0.80 € (status
 after the Stripe acquisition only from secondary sources); Paddle: products under 10 $ "contact us", 100 € payout floor;

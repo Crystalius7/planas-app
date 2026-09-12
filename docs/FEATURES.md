@@ -5,7 +5,7 @@
 | Feature | Where | State |
 |---|---|---|
 | All Moodle info in one place: courses, tests, exams, deadlines, notifications | collect.py (token + session + bundle), notify.py, dashboard "Today" + "Tests & exams" | built (local pilot) |
-| Study efficiently for the next in-person test/exam, video lessons transcribed and frames scanned | vendor plan.py/units.py/video.py through workspace.bind(); digest.py | built (engine); video route needs ffmpeg + faster-whisper installed on the student's PC |
+| Study efficiently for the next in-person test/exam, video lessons transcribed and frames scanned | vendor plan.py/units.py/video.py through workspace.bind(); digest.py | built (engine); video route needs ffmpeg + faster-whisper on the student's PC; transcripts feed the digest today, slide FRAMES need a reader: Tesseract OCR (free, planned) or a vision-capable cloud model on the paid tier - in the personal system an agent reads the frames by eye, which no product can do for every user |
 | Minutes-per-day slider with a FORCED adaptable minimum | planner.workload()/estimate(); dashboard sliders | built |
 | Grade-target slider; show the grade drop and the time saved | grades.py + planner.estimate(); readout tiles | built (labelled estimates) |
 | "Done" button per test/exam; completed ones grey, nearby | planner.mark_done(); "Completed" collapsible list | built |
