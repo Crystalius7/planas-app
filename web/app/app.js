@@ -156,7 +156,7 @@
     $$('#nextUp .bar > i').forEach((i) => { i.style.width = i.dataset.w + '%'; });   // CSSOM, not an inline style attribute (CSP style-src 'self')
   }
   function renderTests() {
-    const li = (a, done) => `<li data-id="${esc(a.id)}"><div class="date">${fmtDate(a.date)}<small>${a.time ? (a.confidence === 'estimated' ? '~' : '') + a.time : ''} ${done ? '' : t('today.daysLeft', { n: daysLeft(a.date) })}</small></div><div><div class="title">${esc(a.title)}</div><div class="meta">${esc(a.subjectName || a.subject)} · ${t('tests.kinds.' + (a.kind || 'test'))} · <span class="tag ${a.confidence}">${t('tests.confidence.' + (a.confidence || 'confirmed'))}</span>${(a.topics || []).length ? ' · ' + t('tests.topics') + ': ' + esc((a.topics || []).join(', ')) : ''}</div></div><div class="acts">${done ? `<button class="btn" data-act="undone">${t('tests.undo')}</button>` : `<button class="btn primary" data-act="done">✓ ${t('tests.done')}</button><button class="btn" data-act="edit">${t('tests.edit')}</button>`}<button class="btn" data-act="delete">${t('tests.delete')}</button></div></li>`;
+    const li = (a, done) => `<li data-id="${esc(a.id)}"><div class="date">${fmtDate(a.date)}<small>${a.time ? (a.confidence === 'estimated' ? '~' : '') + a.time : ''} ${done ? '' : t('today.daysLeft', { n: daysLeft(a.date) })}</small></div><div><div class="title">${esc(a.title)}</div><div class="meta">${esc(a.subjectName || a.subject)} · ${t('tests.kinds.' + (a.kind || 'test'))} · <span class="tag ${a.confidence}">${t('tests.confidence.' + (a.confidence || 'confirmed'))}</span>${(a.topics || []).length ? ' · ' + t('tests.topics') + ': ' + esc((a.topics || []).join(', ')) : ''}</div></div><div class="acts">${done ? `<button class="btn" data-act="undone">${t('tests.undo')}</button>` : `${!S.demo && !(a.topics || []).length ? `<button class="btn" data-act="prepare" title="${t('tests.noTopics')}">${t('tests.prepare')}</button>` : ''}<button class="btn primary" data-act="done">✓ ${t('tests.done')}</button><button class="btn" data-act="edit">${t('tests.edit')}</button>`}<button class="btn" data-act="delete">${t('tests.delete')}</button></div></li>`;
     const up = S.assessments.upcoming.slice().sort((a, b) => a.date.localeCompare(b.date));
     const done = S.assessments.completed.slice().sort((a, b) => b.date.localeCompare(a.date));
     $('#upcoming').innerHTML = up.map((a) => li(a, false)).join('') || `<li class="muted">${t('tests.emptyUpcoming')}</li>`;
@@ -249,14 +249,20 @@
     $('#cancelTest').addEventListener('click', () => { $('#testForm').hidden = true; });
     $('#testForm').addEventListener('submit', async (e) => {
       e.preventDefault(); const f = e.target; const b = { op: f.id.value ? 'edit' : 'add', id: f.id.value || undefined, subject: f.subject.value, title: f.title.value, kind: f.kind.value, date: f.date.value, time: f.time.value || null };
-      S.assessments = await api('/assessments', { method: 'POST', body: b }); f.hidden = true; renderTests(); renderNextUp();
+      await api('/assessments', { method: 'POST', body: b }); S.assessments = await api('/assessments'); f.hidden = true; renderTests(); renderNextUp();   // one contract in both modes: mutate, then GET the collection (glance 2026-09-12)
     });
     document.addEventListener('click', async (e) => {
       const b = e.target.closest('[data-act]'); if (!b) return;
       const id = b.closest('li').dataset.id; const act = b.dataset.act;
       if (act === 'edit') { const a = [...S.assessments.upcoming, ...S.assessments.completed].find((x) => x.id === id); const f = $('#testForm'); f.id.value = a.id; f.subject.value = a.subjectName || a.subject || ''; f.title.value = a.title; f.kind.value = a.kind || 'test'; f.date.value = a.date; f.time.value = a.time || ''; f.hidden = false; f.scrollIntoView({ behavior: 'smooth' }); return; }
+      if (act === 'prepare') {
+        b.disabled = true; $('#mode').textContent = t('tests.preparing');
+        try { await api('/prepare', { method: 'POST', body: { id } }); await api('/plan', { method: 'POST', body: {} }); S.assessments = await api('/assessments'); renderTests(); renderNextUp(); }
+        catch (err) { alert(t('common.error', { e: err.message })); }
+        setTimeout(renderMode, 1500); return;
+      }
       if (act === 'delete' && !confirm(t('tests.delete') + '?')) return;
-      S.assessments = await api('/assessments', { method: 'POST', body: { op: act, id } }); renderTests(); renderNextUp();
+      await api('/assessments', { method: 'POST', body: { op: act, id } }); S.assessments = await api('/assessments'); renderTests(); renderNextUp();
       if (act === 'done') { $('#mode').textContent = t('tests.digesting'); try { await api('/plan', { method: 'POST', body: {} }); } catch (err) { /* demo */ } setTimeout(renderMode, 1500); }
     });
     $('#materialFilter').addEventListener('input', renderMaterial);

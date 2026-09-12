@@ -39,7 +39,7 @@ def main(argv: list[str]) -> int:
     ap.add_argument("site", nargs="?")
     ap.add_argument("--workspace", default=str(default_root()))
     ap.add_argument("--port", type=int, default=8765)
-    ap.add_argument("--origin", default="*")
+    ap.add_argument("--origin", default="app", help="allowed browser origins, comma-separated; 'app' = the demo site, localhost and the extension schemes; '*' only for local experiments")
     ap.add_argument("--route", choices=["password", "token", "session"])
     ap.add_argument("--username")
     ap.add_argument("--token")

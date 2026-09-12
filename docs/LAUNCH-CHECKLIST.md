@@ -19,6 +19,10 @@
 - [ ] Legal pages final (Terms, Privacy, AI notice) reviewed once by a Lithuanian lawyer or a legal template service; consent texts in every shipped language
 - [ ] Age gate + parental consent flow for users under the country's digital-consent age (14 in Lithuania)
 - [ ] Records of processing + DPIA written (minors at scale, profiling of study behaviour) - docs/LEGAL.md
+- [ ] OWNER: legal form decided before taking minors' money - an MB (limited liability) is recommended over individuali veikla (unlimited personal liability) - docs/LEGAL.md §5
+- [ ] Adult-payer flow: a subscription for a student under 18 is bought by a parent/guardian (CK Art 2.8) - checkout and Terms §6
+- [ ] "Cancel subscription" function inside the app (Consumer Rights Directive Art 11a, applicable since 19 June 2026), order button worded "Subscribe and pay" (Art 8(2)), confirmation e-mail (Art 8(7)), pre-charge reminder before the trial converts
+- [ ] Takedown channel published (an e-mail address for rights holders) and TDM opt-out reservations honoured by the digest - docs/LEGAL.md §2
 - [ ] Extension published on Edge Add-ons and Firefox AMO (free); Chrome only after the fee is approved
 - [ ] Engine tests green (`python product/tests/test_engine.py`) and `python product/tools/sync_engine.py --check` clean
 - [ ] Every shipped page looked at (desktop + phone) after the last change; no console errors; no horizontal overflow

@@ -95,6 +95,20 @@ def mark_read(ws: Workspace, before: str | None = None):
     log_p.write_text(json.dumps(log, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
+def mark_read_items(ws: Workspace, keys: list[tuple]):
+    """Mark only the listed changes read: keys are (at, kind, courseId, text) tuples (glance 2026-09-12: never acknowledge
+    a change that was not incorporated)."""
+    log_p = ws.state / "notifications.json"
+    if not log_p.exists() or not keys:
+        return
+    wanted = {tuple(str(x) for x in k) for k in keys}
+    log = json.loads(log_p.read_text(encoding="utf-8"))
+    for i in log.get("items", []):
+        if (str(i.get("at")), str(i.get("kind")), str(i.get("courseId")), str(i.get("text"))) in wanted:
+            i["read"] = True
+    log_p.write_text(json.dumps(log, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
 def new_material_for_topics(ws: Workspace) -> list[dict]:
     """The 'add new material' button (owner 2026-09-12: "dynamically add the new material in a smart way, nicely fitting
     into what's already there"): unread module/file changes routed to the topic whose section they belong to, so the

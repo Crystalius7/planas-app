@@ -78,13 +78,22 @@ class Digest:
                 p = course_dir / t
                 text = ""
                 if p.exists() and p.is_file():
-                    if p.suffix.lower() == ".md":
-                        text = p.read_text(encoding="utf-8", errors="replace")
-                    else:
-                        try:
-                            text = extract.extract_text(p) if hasattr(extract, "extract_text") else ""
-                        except Exception as e:  # noqa: BLE001 - a broken file is reported in the ledger, never crashes a digest
-                            item["error"] = f"{type(e).__name__}: {e}"
+                    suffix = p.suffix.lower()
+                    try:
+                        if suffix in (".md", ".txt", ".csv"):
+                            text = p.read_text(encoding="utf-8", errors="replace")
+                        elif suffix == ".docx":
+                            text = extract.docx_text(p)
+                        elif suffix == ".pdf":
+                            text = extract.pdf_text(p)
+                        elif suffix == ".pptx":
+                            text = extract.pptx_text(p)
+                        elif suffix in (".html", ".htm"):
+                            text = re.sub(r"<[^>]+>", " ", p.read_text(encoding="utf-8", errors="replace"))
+                        else:
+                            item["note"] = f"{suffix or 'no extension'}: not a text format (image/audio/archive) - listed, not read"
+                    except Exception as e:  # noqa: BLE001 - a broken file is reported in the ledger, never crashes a digest
+                        item["error"] = f"{type(e).__name__}: {e}"
                 elif t.startswith("http"):
                     for vt in course_dir.glob(f"videos/*{_vid_key(t)}*.txt"):
                         text += vt.read_text(encoding="utf-8", errors="replace")
@@ -172,6 +181,7 @@ def baseline(topic_id: str, subject_id: str, title: str, course_name: str, text:
             continue
         head = re.sub(r"^[#=\s]+|[=\s]+$", "", lines[0]).strip()
         head = re.sub(r"\s*\(\w+\)\s*\[.*?\]\s*$", "", head)
+        head = head.split(" / ")[-1].strip()   # "section / item" chunk headers keep only the item
         if not head or len(head) > 120 or head.lower() in seen:
             continue
         body = " ".join(lines[1:])[:600]

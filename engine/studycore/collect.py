@@ -44,6 +44,30 @@ def slug(t: str) -> str:
     return re.sub(r"[\s_-]+", "-", t).strip("-")[:60] or "x"
 
 
+def safe_name(name: str | None, fallback: str = "file") -> str:
+    """A file name from Moodle, a header or an extension bundle becomes ONE path component: no directories, no dot-dot,
+    no drive letters, no control characters (glance 2026-09-12, P1: an imported name could escape the workspace)."""
+    n = (name or "").replace("\\", "/").split("/")[-1]
+    n = re.sub(r"[\x00-\x1f<>:\"|?*]", "", n).strip(" .")
+    if n in ("", ".", ".."):
+        return fallback
+    return n[:150]
+
+
+def safe_id(value, fallback: str = "0") -> str:
+    """Course/module ids from a client become digits only."""
+    s = str(value if value is not None else "")
+    return s if re.fullmatch(r"\d{1,12}", s) else fallback
+
+
+def within(base: Path, target: Path) -> Path:
+    """Resolve `target` and refuse anything outside `base`."""
+    b, t = base.resolve(), target.resolve()
+    if b != t and b not in t.parents:
+        raise ValueError(f"path escapes its folder: {target}")
+    return t
+
+
 def strip_tags(h: str) -> str:
     h = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", h or "")
     h = re.sub(r"(?i)<br\s*/?>|</p>|</div>|</li>|</h\d>|</tr>", "\n", h)
@@ -242,9 +266,9 @@ class MoodleSession:
         m = re.search(r"filename\*?=(?:UTF-8'')?\"?([^\";]+)", cd)
         if m:
             name = requests.utils.unquote(m.group(1))
-        name = name or Path(requests.utils.urlparse(r.url).path).name or (slug(hint) + ".bin")
+        name = safe_name(name or Path(requests.utils.urlparse(r.url).path).name, slug(hint) + ".bin")
         dest_dir.mkdir(parents=True, exist_ok=True)
-        dest = dest_dir / name
+        dest = within(dest_dir, dest_dir / name)
         with open(dest, "wb") as f:
             for chunk in r.iter_content(65536):
                 f.write(chunk)
@@ -348,7 +372,7 @@ def mirror_token(ws: Workspace, mt: MoodleToken, cid: int, fullname: str) -> dic
             desc = strip_tags(m.get("description") or "")
             for c in m.get("contents", []) or []:
                 if c.get("type") == "file" and c.get("fileurl"):
-                    p = mt.download(c["fileurl"], cdir / "files" / slug(m.get("name", "")) / c.get("filename", "file"))
+                    p = mt.download(c["fileurl"], within(cdir, cdir / "files" / slug(m.get("name", "")) / safe_name(c.get("filename"))))
                     if p:
                         entry["files"].append(f"{slug(m.get('name', ''))}/{p.name}")
                 elif c.get("type") == "url":
@@ -368,28 +392,35 @@ def import_bundle(ws: Workspace, bundle: dict) -> list[dict]:
     or are fetched later by the connector through the session the extension exported."""
     out = []
     for c in bundle.get("courses", []):
-        cdir = ws.courses / f"{c['id']}-{slug(c.get('fullname', ''))}"
+        cid = safe_id(c.get("id"))
+        if cid == "0":
+            continue   # a course without a numeric id is not a Moodle course
+        cdir = within(ws.courses, ws.courses / f"{cid}-{slug(c.get('fullname', ''))}")
         cdir.mkdir(parents=True, exist_ok=True)
         modules = []
         for m in c.get("modules", []):
-            entry = {"id": m["id"], "module": m.get("module"), "name": m.get("name", ""), "url": m.get("url"), "section": m.get("section", ""), "files": [], "text": None}
+            mid = safe_id(m.get("id"))
+            if mid == "0":
+                continue
+            mslug = slug(m.get("name", ""))
+            entry = {"id": int(mid), "module": re.sub(r"[^a-z0-9_]", "", str(m.get("module") or "")), "name": str(m.get("name", ""))[:300], "url": m.get("url"), "section": str(m.get("section", ""))[:300], "files": [], "text": None}
             if m.get("text"):
-                tp = cdir / "pages" / f"{m['id']}-{slug(m.get('name', ''))}.md"
+                tp = within(cdir, cdir / "pages" / f"{mid}-{mslug}.md")
                 tp.parent.mkdir(exist_ok=True)
-                tp.write_text(f"# {m.get('name', '')} ({m.get('module')})\n{m.get('url') or ''}\n\n{m['text']}", encoding="utf-8")
+                tp.write_text(f"# {entry['name']} ({entry['module']})\n{m.get('url') or ''}\n\n{str(m['text'])[:400000]}", encoding="utf-8")
                 entry["text"] = tp.name
             for f in m.get("files", []) or []:
                 if f.get("b64"):
-                    p = cdir / "files" / slug(m.get("name", "")) / (f.get("name") or "file")
+                    p = within(cdir, cdir / "files" / mslug / safe_name(f.get("name")))
                     p.parent.mkdir(parents=True, exist_ok=True)
                     p.write_bytes(base64.b64decode(f["b64"]))
-                    entry["files"].append(f"{slug(m.get('name', ''))}/{p.name}")
+                    entry["files"].append(f"{mslug}/{p.name}")
                 elif f.get("url"):
-                    entry.setdefault("pending", []).append(f["url"])
+                    entry.setdefault("pending", []).append(str(f["url"])[:2000])
             if m.get("external"):
-                entry["external"] = m["external"]
+                entry["external"] = str(m["external"])[:2000]
             modules.append(entry)
-        out.append(_write_mirror(ws, cdir, c["id"], c.get("fullname", ""), c.get("sections", []), modules))
+        out.append(_write_mirror(ws, cdir, int(cid), str(c.get("fullname", ""))[:300], c.get("sections", []), modules))
     if bundle.get("calendar") is not None:
         save_deadlines(ws, bundle["calendar"])
     return out

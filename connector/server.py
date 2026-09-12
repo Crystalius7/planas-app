@@ -227,13 +227,64 @@ class Connector:
         built = render.build_topic(self.ws, cp)
         return {"topic": tid, "content": str(cp), "baseline": content.get("baseline", False), "built": built}
 
+    def _topic_record(self, tid: str) -> tuple[str | None, dict | None, dict | None]:
+        t = self.ws.read("topics.json")
+        for sid, s in t.get("subjects", {}).items():
+            for x in s.get("topics", []):
+                if x.get("id") == tid:
+                    return sid, s, x
+        return None, None, None
+
     def material_add(self) -> dict:
+        """Glance 2026-09-12 (P1): group the unread changes by topic and re-digest each topic with its FULL section set and its
+        own title (never a partial replacement), keep the page pointer, and mark read only what was incorporated."""
         routed = notify.new_material_for_topics(self.ws)
-        done = []
-        for r in [x for x in routed if x["routed"]]:
-            done.append(self.digest_topic({"course": r["courseId"], "topic": r["topic"], "title": r["topic"], "sections": [r["section"]]}))
-        notify.mark_read(self.ws)
-        return {"routed": len(done), "unrouted": [x for x in routed if not x["routed"]]}
+        by_topic: dict[str, list[dict]] = {}
+        for r in routed:
+            if r["routed"]:
+                by_topic.setdefault(r["topic"], []).append(r)
+        done, incorporated = [], []
+        for tid, changes in by_topic.items():
+            sid, subj, rec = self._topic_record(tid)
+            if rec is None:
+                continue
+            sections = list(dict.fromkeys((rec.get("sections") or []) + [c["section"] for c in changes if c.get("section")]))
+            try:
+                done.append(self.digest_topic({"course": subj["courseId"], "topic": tid, "title": rec.get("title") or tid, "sections": sections}))
+                incorporated += [c for c in changes]
+            except Exception as e:  # noqa: BLE001 - one topic failing must not swallow the others' notifications
+                done.append({"topic": tid, "error": f"{type(e).__name__}: {e}"})
+        notify.mark_read_items(self.ws, [(c.get("at"), c.get("kind"), c.get("courseId"), c.get("text")) for c in incorporated])
+        return {"topics": done, "incorporated": len(incorporated), "unrouted": [x for x in routed if not x["routed"]]}
+
+    def prepare(self, body: dict) -> dict:
+        """Glance 2026-09-12 (P1): the first plan. For an assessment with no topics, digest its subject's course (the sections
+        the student picked, or every section) into one topic and link it; then the plan can be built."""
+        reg = self.ws.read("assessments.json")
+        a = next((x for x in reg.get("assessments", []) if x.get("id") == body.get("id")), None)
+        if a is None:
+            raise KeyError(body.get("id"))
+        t = self.ws.read("topics.json")
+        sid, subj = None, None
+        for k, s in t.get("subjects", {}).items():
+            if k == a.get("subject") or str(s.get("courseId")) == str(body.get("course") or a.get("courseId")) or s.get("name") == a.get("subjectName"):
+                sid, subj = k, s
+        if subj is None:
+            raise ValueError("no mirrored course matches this assessment - scan first, then pick the course")
+        sections = body.get("sections")
+        if not sections:
+            cdir = next(iter(self.ws.courses.glob(f"{subj['courseId']}-*")), None)
+            if cdir is None:
+                raise ValueError("course not mirrored yet - scan first")
+            idx = (cdir / "INDEX.md").read_text(encoding="utf-8") if (cdir / "INDEX.md").exists() else ""
+            sections = [l[3:].strip() for l in idx.splitlines() if l.startswith("## ")]
+        res = self.digest_topic({"course": subj["courseId"], "subject": sid, "title": body.get("title") or a.get("title") or "Topic", "sections": sections})
+        for x in reg["assessments"]:
+            if x["id"] == a["id"]:
+                x["subject"] = sid
+                x["topics"] = list(dict.fromkeys((x.get("topics") or []) + [res["topic"]]))
+        self.ws.write("assessments.json", reg)
+        return {"assessment": a["id"], "topic": res["topic"], "sections": sections, "baseline": res.get("baseline", False)}
 
     def report(self, body: dict) -> dict:
         p = self.ws.state / "reports.json"
@@ -244,21 +295,62 @@ class Connector:
         return {"ok": True, "stored": str(p), "forwardedWithConsent": bool(self.ws.settings.get("shareData"))}
 
 
+DEFAULT_ORIGINS = ["https://crystalius7.github.io", "http://127.0.0.1", "http://localhost", "chrome-extension://", "moz-extension://", "safari-web-extension://"]
+
+
+def origin_allowed(origin: str | None, allowed: list[str]) -> bool:
+    """A browser page always sends Origin; a hostile page's Origin is not on the list. Local non-browser clients (curl, the
+    CLI) send none and already have full access to this machine. '*' is accepted only when the operator asked for it."""
+    if origin is None:
+        return True
+    if "*" in allowed:
+        return True
+    o = origin.rstrip("/")
+    for a in allowed:
+        if a.endswith("://"):                             # an extension origin: scheme + random id
+            if o.startswith(a):
+                return True
+            continue
+        a = a.rstrip("/")
+        if o == a or o.startswith(a + ":"):              # exact origin, or the same host on any port (127.0.0.1:NNNN)
+            return True
+    return False
+
+
 def make_handler(cx: Connector, origin: str):
+    allowed = DEFAULT_ORIGINS if origin in ("", "app", None) else [x.strip() for x in origin.split(",") if x.strip()]
+
     class H(BaseHTTPRequestHandler):
         def _send(self, code: int, body, ctype="application/json"):
             data = body.encode("utf-8") if isinstance(body, str) else json.dumps(body, ensure_ascii=False).encode("utf-8")
             self.send_response(code)
             self.send_header("Content-Type", ctype + "; charset=utf-8")
             self.send_header("Content-Length", str(len(data)))
-            self.send_header("Access-Control-Allow-Origin", origin)
+            req_origin = self.headers.get("Origin")
+            if req_origin and origin_allowed(req_origin, allowed):
+                self.send_header("Access-Control-Allow-Origin", "*" if "*" in allowed else req_origin)
             self.send_header("Access-Control-Allow-Headers", "Content-Type")
             self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
             self.send_header("Vary", "Origin")
+            self.send_header("X-Content-Type-Options", "nosniff")
             self.end_headers()
             self.wfile.write(data)
 
+        def _guard(self) -> bool:
+            """Glance 2026-09-12 (P1): binding 127.0.0.1 does not authenticate callers. Two checks stop a hostile web page:
+            its Origin is not on the allow-list (refused), and a cross-site no-cors POST cannot carry application/json."""
+            req_origin = self.headers.get("Origin")
+            if not origin_allowed(req_origin, allowed):
+                self._send(403, {"error": "origin not allowed"})
+                return False
+            if self.command == "POST" and not (self.headers.get("Content-Type") or "").lower().startswith("application/json"):
+                self._send(415, {"error": "POST bodies must be application/json"})
+                return False
+            return True
+
         def do_OPTIONS(self):
+            if not origin_allowed(self.headers.get("Origin"), allowed):
+                return self._send(403, "")
             self._send(204, "")
 
         def _body(self) -> dict:
@@ -271,6 +363,8 @@ def make_handler(cx: Connector, origin: str):
         def do_GET(self):
             u = urllib.parse.urlparse(self.path)
             q = urllib.parse.parse_qs(u.query)
+            if not self._guard():
+                return
             try:
                 with LOCK:
                     if u.path == "/status":
@@ -297,11 +391,15 @@ def make_handler(cx: Connector, origin: str):
 
         def do_POST(self):
             u = urllib.parse.urlparse(self.path)
+            if not self._guard():
+                return
             try:
                 body = self._body()
                 with LOCK:
                     if u.path == "/connect":
                         return self._send(200, cx.connect(body))
+                    if u.path == "/prepare":
+                        return self._send(200, cx.prepare(body))
                     if u.path == "/scan":
                         return self._send(200, cx.scan())
                     if u.path == "/bundle":
