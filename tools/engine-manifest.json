@@ -1,0 +1,11 @@
+{
+  "_doc": "Allowlisted one-way export of the personal study engine (workspace tools/) into engine/studycore/vendor/. Versioned: bump `version` when a vendored file's contract changes; sync_engine.py refuses to run when a vendored copy was edited by hand (drift) and lists what differs. Excluded on purpose: moodle.py (school-specific SSO session), homework.py, outlook.py, agent_runner.py, guard.py, notify.py (act in the owner's name or e-mail him), secrets, study content, courses.",
+  "version": "2026.09.12",
+  "source": "../../tools",
+  "target": "engine/studycore/vendor",
+  "files": [
+    "plan.py", "units.py", "material.py", "calc.py", "boardcheck.py", "extract.py", "video.py", "topic.py",
+    "board.js", "board.css", "planas.template.html", "topic.template.html", "test_plan.py", "test_material.py"
+  ],
+  "excluded": ["moodle.py", "homework.py", "outlook.py", "agent_runner.py", "guard.py", "notify.py", "look.py", "lock.ps1", "tasks.ps1", "prompt_hook.ps1", "rules_hygiene_due.ps1"]
+}

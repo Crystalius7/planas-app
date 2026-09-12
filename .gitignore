@@ -1,0 +1,25 @@
+# never any secret, session, token or user data
+secrets/
+**/secrets/
+*.env
+.env*
+state/
+workspace/
+**/workspace/
+*.sqlite3
+# vendored engine ledger stays; generated study output does not
+engine/studycore/vendor/__pycache__/
+__pycache__/
+*.pyc
+# screenshots and scratch
+.look/
+.build.json
+*.build.json
+# node / wrangler
+node_modules/
+.wrangler/
+# editor
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

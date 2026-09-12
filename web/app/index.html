@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' http://127.0.0.1:8765 https://*.workers.dev; img-src 'self' data:; style-src 'self'; script-src 'self'; frame-src 'self' http://127.0.0.1:8765; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Planas</title>
+<link rel="stylesheet" href="app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f5eff'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='white'/%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="nav.today">Today</a>
+<header class="top">
+  <div class="brand"><span class="logo" aria-hidden="true"></span><span data-i18n="app.name">Planas</span></div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" data-view="today" role="tab" aria-selected="true" data-i18n="nav.today">Today</button>
+    <button class="tab" data-view="tests" role="tab" data-i18n="nav.tests">Tests &amp; exams</button>
+    <button class="tab" data-view="material" role="tab" data-i18n="nav.material">Material</button>
+    <button class="tab" data-view="settings" role="tab" data-i18n="nav.settings">Settings</button>
+  </nav>
+  <div class="right">
+    <button class="icon" id="bell" aria-label="What's new"><span class="badge" id="bellCount" hidden>0</span>🔔</button>
+    <select id="lang" aria-label="Language"></select>
+  </div>
+</header>
+<div class="banner" id="mode"></div>
+
+<main id="main">
+  <section class="view" data-view="today">
+    <h1 data-i18n="today.title">Today's plan</h1>
+    <div class="cards" id="nextUp"></div>
+    <div class="row gap">
+      <a class="btn primary" id="openHub" target="_blank" rel="noopener" data-i18n="today.openHub">Open today's study session</a>
+      <button class="btn" id="buildPlan" data-i18n="today.buildPlan">Build the plan</button>
+    </div>
+    <div class="slidersCard">
+      <h2 data-i18n="sliders.title">How much do you want to study?</h2>
+      <div class="slider">
+        <label for="minutes"><span data-i18n="sliders.minutes">Minutes per day</span> <output id="minutesOut">15</output> <span data-i18n="common.min">min</span></label>
+        <input type="range" id="minutes" min="5" max="90" step="5" value="15">
+        <div class="hint" id="minHint"></div>
+      </div>
+      <div class="slider">
+        <label for="grade"><span data-i18n="sliders.grade">Grade you are aiming for</span> <output id="gradeOut">8</output></label>
+        <input type="range" id="grade" min="0" max="9" step="1" value="2">
+        <div class="hint"><label class="inline"><span data-i18n="sliders.scale">Grading scale</span> <select id="scale"></select></label></div>
+      </div>
+      <div class="readout" id="readout"></div>
+      <div class="row gap"><button class="btn primary" id="applySliders" data-i18n="sliders.apply">Apply and rebuild</button><span class="muted" data-i18n="app.estimateNote"></span></div>
+    </div>
+    <div class="hubWrap"><iframe id="hub" title="Study session" hidden></iframe></div>
+  </section>
+
+  <section class="view" data-view="tests" hidden>
+    <h1 data-i18n="tests.title">Tests &amp; exams</h1>
+    <div class="row gap"><button class="btn primary" id="addTest" data-i18n="tests.add">Add a test or exam</button></div>
+    <form id="testForm" class="form" hidden>
+      <label><span data-i18n="tests.subject">Subject</span><input name="subject" required></label>
+      <label><span data-i18n="tests.titleField">Title</span><input name="title" required></label>
+      <label><span data-i18n="tests.kind">Kind</span><select name="kind"><option value="test">In-person test</option><option value="exam">Exam</option><option value="online-test">Online test</option></select></label>
+      <label><span data-i18n="tests.date">Date</span><input name="date" type="date" required></label>
+      <label><span data-i18n="tests.time">Time</span><input name="time" type="time"></label>
+      <input type="hidden" name="id">
+      <div class="row gap"><button class="btn primary" type="submit" data-i18n="tests.save">Save</button><button class="btn" type="button" id="cancelTest" data-i18n="tests.cancel">Cancel</button></div>
+    </form>
+    <h2 data-i18n="tests.upcoming">Upcoming</h2>
+    <ul class="list" id="upcoming"></ul>
+    <details class="completed" id="completedBox"><summary><span data-i18n="tests.completed">Completed</span> <span class="count" id="completedCount">0</span></summary><ul class="list grey" id="completed"></ul></details>
+  </section>
+
+  <section class="view" data-view="material" hidden>
+    <h1 data-i18n="material.title">Your material, checked</h1>
+    <p class="muted" data-i18n="material.intro"></p>
+    <div class="row gap wrap">
+      <button class="btn" id="scanNow" data-i18n="material.scan">Scan Moodle now</button>
+      <button class="btn primary" id="addMaterial" hidden data-i18n="material.addNew">Add the new material to the plan</button>
+      <span class="muted" id="lastScan"></span>
+    </div>
+    <div class="notice" id="newMaterial" hidden></div>
+    <p class="muted" id="digestOf"></p>
+    <div class="row gap"><input id="materialFilter" placeholder="Filter" data-i18n-placeholder="material.filter"></div>
+    <div class="tableWrap"><table class="table" id="materialTable"><thead><tr><th data-i18n="material.course">Course</th><th data-i18n="material.item">Item</th><th data-i18n="material.verdict">Verdict</th><th data-i18n="material.topic">Topic</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="view" data-view="settings" hidden>
+    <h1 data-i18n="settings.title">Settings</h1>
+    <div class="grid2">
+      <fieldset><legend data-i18n="settings.language">Language</legend><p class="muted" id="detected"></p></fieldset>
+      <fieldset><legend data-i18n="settings.moodle">Your Moodle</legend>
+        <label><span data-i18n="settings.moodleSite">Moodle address</span><input id="site" placeholder="https://moodle.school.example"></label>
+        <label class="inline"><input type="radio" name="route" value="extension" checked> <span data-i18n="settings.routes.extension"></span></label>
+        <label class="inline"><input type="radio" name="route" value="password"> <span data-i18n="settings.routes.password"></span></label>
+        <label class="inline"><input type="radio" name="route" value="token"> <span data-i18n="settings.routes.token"></span></label>
+        <div id="routeFields"></div>
+        <div class="row gap"><button class="btn primary" id="connect" data-i18n="settings.connect">Connect</button><span class="muted" id="connectMsg"></span></div>
+      </fieldset>
+      <fieldset><legend data-i18n="settings.factCheck">Fact checker</legend>
+        <label class="switch"><input type="checkbox" id="factCheck"><span></span></label>
+        <p class="muted" data-i18n="settings.factCheckHelp"></p>
+        <details><summary data-i18n="settings.corrections"></summary><ul id="corrections" class="list small"></ul></details>
+      </fieldset>
+      <fieldset><legend data-i18n="settings.share">Help improve the app</legend>
+        <label class="switch"><input type="checkbox" id="shareData"><span></span></label>
+        <p class="muted" data-i18n="settings.shareHelp"></p>
+      </fieldset>
+      <fieldset><legend data-i18n="settings.digest">How the material is prepared</legend>
+        <select id="provider"><option value="none">Baseline (no AI)</option><option value="ollama">Local AI (Ollama)</option><option value="anthropic">Cloud AI (Claude)</option><option value="openai">Cloud AI (OpenAI)</option></select>
+        <p class="muted" data-i18n="settings.digestHelp"></p>
+      </fieldset>
+      <fieldset><legend data-i18n="settings.account">Account</legend>
+        <p id="planLine" class="muted"></p>
+        <div class="row gap wrap"><button class="btn" id="startTrial" data-i18n="settings.startTrial"></button><button class="btn" id="subscribe" data-i18n="settings.subscribe"></button></div>
+        <div class="row gap wrap"><button class="btn danger" id="deleteAccount" data-i18n="settings.deleteAccount"></button></div>
+      </fieldset>
+    </div>
+    <div class="row gap"><button class="btn primary" id="saveSettings" data-i18n="settings.save">Save</button><span class="muted" id="settingsMsg"></span></div>
+  </section>
+</main>
+
+<aside class="drawer" id="drawer" hidden>
+  <h2 data-i18n="notifications.title">What's new</h2>
+  <ul class="list" id="notifList"></ul>
+  <button class="btn" id="markRead" data-i18n="notifications.markRead">Mark all as read</button>
+</aside>
+
+<button class="fab" id="reportBtn" data-i18n-title="report.button" title="Report a bug or suggest a feature">💬</button>
+<dialog id="reportDlg">
+  <form method="dialog" id="reportForm">
+    <h2 data-i18n="report.title">Tell us</h2>
+    <label class="inline"><input type="radio" name="kind" value="bug" checked> <span data-i18n="report.bug"></span></label>
+    <label class="inline"><input type="radio" name="kind" value="feature"> <span data-i18n="report.feature"></span></label>
+    <label><span data-i18n="report.text"></span><textarea name="text" rows="5" required></textarea></label>
+    <p class="muted" data-i18n="report.privacy"></p>
+    <div class="row gap"><button class="btn primary" value="send" data-i18n="report.send">Send</button><button class="btn" value="cancel" data-i18n="common.close">Close</button></div>
+  </form>
+</dialog>
+
+<footer class="foot"><span data-i18n="legal.disclaimer"></span> · <a href="../legal/terms.html" data-i18n="nav.legal">Terms</a> · <a href="../legal/privacy.html" data-i18n="nav.privacy">Privacy</a> · <span data-i18n="app.worksWith"></span></footer>
+<script src="app.js"></script>
+</body>
+</html>

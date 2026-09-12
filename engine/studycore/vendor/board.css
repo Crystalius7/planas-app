@@ -1,0 +1,108 @@
+/* board.css - the handwritten maths board (owner 2026-09-10). Inlined by tools/topic.py and tools/plan.py. */
+.bd,.bd-calc{--bd-paper:#FFFEF6;--bd-grid:rgba(58,108,178,.16);--bd-margin:rgba(214,64,58,.5);--bd-ink:#1C3E9C;--bd-red:#CF3328;--bd-green:#1F7A4D;
+  --bd-say:#FFFFFF;--bd-line:#D5DDD6;--bd-mute:#66736C;--bd-text:#1F2A24;--bd-amber:#D69A2D;
+  margin:10px 0 4px;display:flex;flex-direction:column;gap:10px;text-align:left;cursor:auto;
+  font-family:"Shantell Sans","Segoe Print","Comic Sans MS",system-ui,sans-serif;color:var(--bd-text)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.bd,.bd-calc){--bd-paper:#1A212E;--bd-grid:rgba(150,180,230,.12);--bd-margin:rgba(255,125,115,.42);
+  --bd-ink:#A9C5FF;--bd-red:#FF8C82;--bd-green:#80D8A8;--bd-say:#1F2A25;--bd-line:#31403A;--bd-mute:#93A39A;--bd-text:#E6ECE7;--bd-amber:#E8B85F}}
+:root[data-theme="dark"] :is(.bd,.bd-calc){--bd-paper:#1A212E;--bd-grid:rgba(150,180,230,.12);--bd-margin:rgba(255,125,115,.42);
+  --bd-ink:#A9C5FF;--bd-red:#FF8C82;--bd-green:#80D8A8;--bd-say:#1F2A25;--bd-line:#31403A;--bd-mute:#93A39A;--bd-text:#E6ECE7;--bd-amber:#E8B85F}
+.bd,.bd *,.bd *::before,.bd *::after{box-sizing:border-box}
+.bd[hidden]{display:none!important}
+.bd-paper{border:1px solid var(--bd-line);border-radius:6px 6px 12px 12px;overflow-x:auto;overflow-y:hidden;background:var(--bd-paper)}
+.bd-sheet{position:relative;min-width:100%;width:max-content;min-height:132px;padding:14px 64px 20px 16px;background-color:var(--bd-paper);
+  background-image:linear-gradient(to right,var(--bd-grid) 1px,transparent 1px),linear-gradient(to bottom,var(--bd-grid) 1px,transparent 1px);
+  background-size:22px 22px;background-position:-1px -1px}
+.bd-sheet::after{content:"";position:absolute;top:0;bottom:0;right:46px;border-left:2px solid var(--bd-margin);pointer-events:none}
+.bd-l{position:relative;display:flex;align-items:center;white-space:nowrap;min-height:44px;padding:4px 6px;color:var(--bd-ink);
+  font-family:"Caveat","Shantell Sans",cursive;font-weight:600;font-size:31px;line-height:1.08}
+.bd-in{display:inline-flex;align-items:center;flex-wrap:nowrap;gap:0}
+.bd-l.bd-txt{white-space:normal;font-size:25px}
+.bd-l.bd-txt .bd-in{display:inline-block;max-width:34ch}
+.bd-l.bd-fix{color:var(--bd-green)}
+.bd-l.bd-wrong:not(.bd-bad){opacity:.38}
+.bd-l.bd-fig{white-space:normal;padding:6px 6px 2px}
+.bd-fig svg{display:block;width:280px;max-width:none;height:auto}
+.bd-l.bd-blank{font-family:"Shantell Sans",system-ui,sans-serif;font-weight:600;font-size:14px;color:var(--bd-mute);border:2px dashed var(--bd-grid);border-radius:8px;margin:4px 0;min-height:40px;padding:6px 10px;white-space:normal;max-width:30ch}
+.bd-l.bd-click{cursor:pointer;border-radius:6px}
+.bd-l.bd-click:hover{background:rgba(58,108,178,.08)}
+.bd-l sup{font-size:.6em;line-height:0;position:relative;top:-.62em;margin-left:.04em}
+.bd-l sub{font-size:.58em;line-height:0;position:relative;top:.3em}
+.bd-fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .1em;font-size:.84em;line-height:1.04}
+.bd-fr>span{padding:0 .16em}
+.bd-fr>.bd-nu{border-bottom:2px solid currentColor}
+/* owner 2026-09-12 ("1/3²" drew the 2 on the fraction bar): inside a fraction or under a root a power keeps its own line box -
+   no relative lift, a real vertical-align - so it can never climb onto the bar; tools/boardcheck.py measures this on the pixels */
+.bd-fr sup,.bd-rb sup{position:static;top:auto;line-height:1;vertical-align:.45em}
+.bd-fr sub,.bd-rb sub{position:static;top:auto;line-height:1;vertical-align:-.25em}
+.bd-fr>.bd-de{padding-top:.1em}
+.bd-rt{display:inline-flex;align-items:stretch;margin:0 .05em}
+.bd-rt>svg{width:.5em;flex:0 0 auto;overflow:visible}
+.bd-rt>svg path{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.bd-ri{font-size:.5em;align-self:flex-start;margin:.1em -.28em 0 0;position:relative;z-index:1}
+.bd-rb{border-top:2px solid currentColor;padding:.08em .12em 0;margin-top:.1em;display:inline-flex;align-items:center}
+.bd-g{display:inline-block;width:.64em;height:.72em;margin:0 .07em;overflow:visible;vertical-align:middle}
+.bd-g path{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bd-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.bd-id{display:inline-flex;align-items:center}
+.bd-id>sup{align-self:flex-start}   /* a flex child ignores vertical-align: a power directly inside a labelled part is pinned to the top (boardcheck 2026-09-12: "64^{2/3}" sat on the baseline) */
+.bd-id>sub{align-self:flex-end}
+.bd-num{position:absolute;right:-52px;width:24px;text-align:center;font:700 21px/1 "Caveat",cursive;color:var(--bd-red);pointer-events:none}
+.bd-ov{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.bd-ov path{fill:none;stroke:var(--bd-red);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.bd-ov path.g{stroke:var(--bd-green)}
+.bd-note{position:absolute;font:700 22px/1 "Caveat",cursive;color:var(--bd-red);white-space:nowrap;pointer-events:none;transform:translateX(-50%)}
+.bd-note.g{color:var(--bd-green)}
+.bd-pen{position:absolute;left:0;top:0;width:30px;height:30px;pointer-events:none;opacity:0;z-index:3;color:var(--bd-ink)}
+.bd-say,.bd-ask{background:var(--bd-say);border:1px solid var(--bd-line);border-radius:10px;padding:10px 12px;font-size:15px;line-height:1.5}
+.bd-say p,.bd-ask p{margin:.3rem 0 0}
+.bd-say b{color:var(--bd-ink)}
+.bd-k{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--bd-mute);font-weight:700}
+.bd-mind{border-left:3px solid var(--bd-amber);padding-left:9px}
+.bd-im{font-family:"Caveat",cursive;font-weight:700;font-size:1.3em;color:var(--bd-ink);white-space:nowrap}
+.bd-im sup{font-size:.62em}
+.bd-o{display:block;width:100%;text-align:left;border:1px solid var(--bd-line);background:var(--bd-paper);color:var(--bd-text);border-radius:9px;padding:8px 11px;margin-top:6px;font:inherit;min-height:44px}
+.bd-o.ok{border-color:var(--bd-green);box-shadow:inset 0 0 0 1.5px var(--bd-green)}
+.bd-o.no{border-color:var(--bd-red);box-shadow:inset 0 0 0 1.5px var(--bd-red)}
+.bd-ctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.bd-b{border:1px solid var(--bd-line);background:var(--bd-say);color:var(--bd-text);border-radius:9px;padding:7px 12px;min-height:40px;
+  font-family:"Shantell Sans",system-ui,sans-serif;font-weight:600;font-size:14px;line-height:1.2;cursor:pointer}
+.bd-b.pri{background:var(--bd-ink);border-color:var(--bd-ink);color:var(--bd-paper)}
+.bd-b:disabled{opacity:.45;cursor:default}
+.bd-b:focus-visible,.bd-o:focus-visible,.bd-l.bd-click:focus-visible{outline:3px solid var(--bd-amber);outline-offset:2px}
+.bd-modes{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.bd-m{font-size:13px;padding:5px 9px;min-height:36px}
+.bd-m[aria-pressed="true"]{border-color:var(--bd-ink);color:var(--bd-ink);box-shadow:inset 0 -3px 0 var(--bd-ink)}
+.bd-dots{display:flex;gap:5px;flex-wrap:wrap}
+.bd-dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--bd-line);background:transparent;color:var(--bd-mute);font:600 13px "Shantell Sans",system-ui,sans-serif;cursor:pointer;padding:0}
+.bd-dot.on{border-color:var(--bd-ink);color:var(--bd-ink)}
+.bd-dot.cur{background:var(--bd-ink);color:var(--bd-paper)}
+.bd-dot.me{border-style:dashed}
+@keyframes bdShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.bd-shake{animation:bdShake .28s ease-in-out 2}
+@media (prefers-reduced-motion:reduce){.bd *{animation:none!important;transition:none!important}}
+@media (max-width:560px){.bd-l{font-size:27px;min-height:40px}.bd-l.bd-txt{font-size:23px}.bd-sheet{padding-right:50px}.bd-sheet::after{right:36px}
+  .bd-num{right:-44px}.bd-modes{margin-left:0}.bd-say,.bd-ask{font-size:14.5px}}
+
+/* calculator strip (tools/calc.py key tokens; owner 2026-09-12) */
+.bd-calc{border-left:3px solid var(--bd-ink);padding:2px 0 2px 9px;margin-top:.45rem;cursor:pointer;line-height:2.1;color:var(--bd-text);font-family:"Shantell Sans","Segoe Print","Comic Sans MS",system-ui,sans-serif;font-size:15px;display:block;margin-bottom:0}
+.bd .bd-calc{display:block}
+.bd-calc b{color:var(--bd-ink)}
+.bd-calc:focus-visible{outline:3px solid var(--bd-amber);outline-offset:2px;border-radius:6px}
+.ckeys{display:inline}
+.ck{display:inline-block;min-width:24px;padding:1px 6px;margin:0 2px;border:1px solid var(--bd-line);border-bottom-width:3px;border-radius:6px;background:var(--bd-paper);color:var(--bd-text);font:600 13px/1.45 "Shantell Sans",system-ui,sans-serif;text-align:center;vertical-align:middle;transition:transform .12s,background .12s}
+.ck i{display:block;font-style:italic;font-size:10px;line-height:1.1;color:var(--bd-amber)}
+.ck-s{background:var(--bd-amber);border-color:var(--bd-amber);color:#1F2A24;font-size:11px}
+.ck-a{background:var(--bd-say);color:var(--bd-mute)}
+.ck.lit{transform:translateY(2px);border-bottom-width:1px;background:var(--bd-ink);color:var(--bd-paper);box-shadow:0 0 0 2px var(--bd-ink)}
+.ck.lit i{color:var(--bd-paper)}
+.ck.done{opacity:.38}
+.cstep{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:6px 0 4px;line-height:1.4}
+.cstep button{font:600 14px/1.2 "Shantell Sans",system-ui,sans-serif;min-height:44px;padding:8px 14px;border:1px solid var(--bd-line);border-radius:10px;background:var(--bd-paper);color:var(--bd-text);cursor:pointer}
+.cstep .cs-next{background:var(--bd-ink);border-color:var(--bd-ink);color:var(--bd-paper)}
+.cstep .cs-now{display:inline-flex;align-items:center;gap:8px;font-size:15px}
+.cstep .cs-i{font-variant-numeric:tabular-nums;color:var(--bd-mute);font-size:13px}
+.cstep .ck.big{font-size:22px;min-width:44px;padding:6px 12px;margin:0}
+.cstep .ck.big i{font-size:13px}
+.cd{font:700 17px/1 "Caveat",cursive;color:var(--bd-green);margin-left:6px;white-space:nowrap}
+.cn{display:block;font-size:13px;line-height:1.4;color:var(--bd-mute)}

@@ -1,0 +1,23 @@
+# wrangler.toml - the hosted API on the Cloudflare FREE plan (no card, hard limits, never bills).
+# Deploy (owner's Cloudflare account, only after the launch checklist is green):  npx wrangler deploy
+# Secrets (never in this file):  npx wrangler secret put ACCESS_SECRET | RESEND_KEY | BILLING_WEBHOOK_SECRET | VAPID_PRIVATE
+name = "planas-api"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[vars]
+APP_ORIGIN = "https://planas.example.invalid"          # set to the real app origin before deploy
+APP_ORIGINS = "https://planas.example.invalid"         # comma-separated allowed browser origins (CORS)
+API_ORIGIN = "https://planas-api.example.workers.dev"  # this worker's public origin (magic links point here)
+MAIL_FROM = "Planas <noreply@example.invalid>"
+ENABLE_JOBS = "0"                                      # remote processing stays off until the pilot proves the boundaries
+
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_KV_ID"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "planas"
+database_id = "REPLACE_WITH_D1_ID"

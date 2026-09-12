@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Every test, every deadline, every new file from your Moodle in one place, and a 15-minute-a-day plan to be ready for each of them.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'none'; base-uri 'none'">
+<title>Planas</title>
+<link rel="stylesheet" href="app/app.css">
+<style>
+  .hero { padding: 48px 0 24px; max-width: 760px; }
+  .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); line-height: 1.15; margin: 0 0 12px; }
+  .hero p { font-size: 1.15rem; color: var(--muted); }
+  .feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 24px 0; }
+  .feats .card h3 { margin: 4px 0 6px; font-size: 1rem; }
+  .steps { counter-reset: s; display: grid; gap: 8px; margin: 20px 0; max-width: 760px; }
+  .steps li { list-style: none; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px 10px 46px; position: relative; }
+  .steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 12px; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); text-align: center; font-weight: 700; line-height: 24px; font-size: .9em; }
+  .price { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 20px 0; max-width: 760px; }
+  .price .card b { font-size: 1.5rem; display: block; }
+  .langs { color: var(--muted); font-size: .9em; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" aria-hidden="true"></span><span>Planas</span></div>
+  <div class="right"><a class="btn primary" href="app/">Open the app</a></div>
+</header>
+<main>
+  <section class="hero">
+    <h1>Every test, every deadline, every new file from your Moodle — in one place. And a plan you can actually keep.</h1>
+    <p>Planas reads the courses you already have on your school's Moodle, shows what is coming, watches for new material, and builds a 15-minute-a-day plan for the next in-person test or exam — in your language, for any subject.</p>
+    <div class="row gap wrap"><a class="btn primary" href="app/">Try the demo</a><span class="muted">No account needed for the demo.</span></div>
+  </section>
+  <section class="feats">
+    <div class="card"><h3>One calendar</h3><p class="muted">Tests, exams, quizzes and assignment deadlines from every course, with clock times. Mark one done and the app moves on to the next.</p></div>
+    <div class="card"><h3>New material, noticed</h3><p class="muted">A new file, page or video appears on Moodle — you hear about it, and one button fits it into what you are already studying.</p></div>
+    <div class="card"><h3>Two sliders</h3><p class="muted">Minutes per day and the grade you want. The app shows the estimated grade and the time saved — and never lets the minutes drop below what the material needs.</p></div>
+    <div class="card"><h3>Any subject, any language</h3><p class="muted">Maths, physics and chemistry get worked examples with calculator steps; literature gets works and quotes; languages get rule-and-exercise; facts get schemas and quizzes. Answers stay in the language of your material.</p></div>
+    <div class="card"><h3>Your password stays yours</h3><p class="muted">Planas connects through your own logged-in browser or your school's official app token. We never see or store your Moodle password.</p></div>
+    <div class="card"><h3>Everything checkable</h3><p class="muted">A ledger lists every file the plan was built from and what happened to it, so you can see nothing was missed.</p></div>
+  </section>
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li>Install the small connector on your computer and the browser extension (or use your school's app token).</li>
+    <li>Open your Moodle in a tab and press “Collect”. Your courses, deadlines and files are mirrored on your own computer.</li>
+    <li>Mark which tests are in person, set your minutes and your target grade.</li>
+    <li>Study three short sessions a day from the plan. Mark a test done — the next one is prepared.</li>
+  </ol>
+  <h2>Price</h2>
+  <div class="price">
+    <div class="card"><b>Free trial</b><p class="muted">7 days, every feature. One trial per student.</p></div>
+    <div class="card"><b>Subscription</b><p class="muted">One low monthly price after the trial; cancel any time. Exact price shown at checkout in your currency, tax included.</p></div>
+  </div>
+  <p class="langs">Interface in English, Lithuanian, Russian, Polish, German, Spanish, French, Portuguese, Italian, Ukrainian and more; study content in the language of your course.</p>
+</main>
+<footer class="foot">Planas helps you plan and revise. Grades depend on you, your teachers and your school; we do not guarantee any result. · <a href="legal/terms.html">Terms</a> · <a href="legal/privacy.html">Privacy</a> · Works with Moodle™. Not affiliated with or endorsed by Moodle Pty Ltd.</footer>
+</body>
+</html>

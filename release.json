@@ -1,0 +1,10 @@
+{
+  "_doc": "The product's release state. `finished` flips to true ONLY through `python product/tools/release.py finish`, which refuses while any launch-checklist item in docs/LAUNCH-CHECKLIST.md is still unchecked, then writes portfolio-entry.json and drops the broadcast notice for the Lojalumas portfolio agent (owner 2026-09-12: the product appears on the portfolio automatically, only when finished, clickable). Never edit `finished` by hand.",
+  "name": "Planas",
+  "version": "0.1.0",
+  "finished": false,
+  "finishedAt": null,
+  "url": null,
+  "repo": null,
+  "demoUrl": null
+}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Planas connector</title>
+<style>
+  body { font: 14px/1.4 system-ui, sans-serif; margin: 0; padding: 14px; width: 320px; color: #1c2430; background: #fff; }
+  h1 { font-size: 15px; margin: 0 0 6px; }
+  p { margin: 6px 0; }
+  .muted { color: #5b6675; font-size: 12px; }
+  button { font: inherit; padding: 8px 12px; border-radius: 8px; border: 1px solid #cfd6df; background: #f4f6f9; cursor: pointer; }
+  button.primary { background: #1f5eff; color: #fff; border-color: #1f5eff; }
+  button[disabled] { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .ok { color: #157347; } .bad { color: #b42318; }
+  select { font: inherit; padding: 4px 6px; border-radius: 6px; border: 1px solid #cfd6df; }
+  code { font-size: 12px; background: #f1f3f6; padding: 1px 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+  <h1>Planas connector</h1>
+  <p class="muted">Collects your courses, deadlines and new material from the Moodle tab you are logged into and hands them to the Planas app on this computer. Your password is never read.</p>
+  <p id="connector" class="muted">Checking the local app…</p>
+  <div class="row">
+    <button id="collect" class="primary">Collect from this tab</button>
+    <span id="result" class="muted"></span>
+  </div>
+  <div class="row">
+    <label class="muted">Re-collect while the browser is open:</label>
+    <select id="every">
+      <option value="0">never</option>
+      <option value="60">every hour</option>
+      <option value="180" selected>every 3 hours</option>
+      <option value="720">twice a day</option>
+    </select>
+  </div>
+  <p class="muted">Route A (token) sites: open <code>/admin/tool/mobile/launch.php?service=moodle_mobile_app&amp;passport=1</code> on your Moodle while this extension is on and the token is handed to the app.</p>
+  <script src="popup.js"></script>
+</body>
+</html>

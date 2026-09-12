@@ -1,0 +1,621 @@
+<title>Mokymosi planas</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Caveat:wght@500;600;700&family=Shantell+Sans:wght@400;600;700&display=swap">
+<style>
+:root{
+  --bg:#F5F7F3; --bg2:#EBEFE8; --panel:#FFFFFF; --ink:#1F2A24; --ink2:#4E5C55; --mute:#8A968F; --line:#D5DDD6;
+  --acc:#2E7D5B; --acc2:#DCEDE3; --acc-ink:#1E5C42; --rose:#B4524B; --rose2:#F1DEDC; --amber:#B98A2E; --amber2:#F3E8CF;
+  --blue:#3A6EA5; --blue2:#DCE6F2; --good:#2E7D5B; --bad:#B4524B; --shadow:0 1px 2px rgba(20,30,25,.06),0 6px 20px rgba(20,30,25,.06);
+  --serif:"Fraunces",Georgia,"Times New Roman",serif; --sans:"Source Sans 3","Segoe UI",Arial,sans-serif;
+  --sun:#E4A93A; --day:#5FA8D3; --moon:#7B6BB5; --geo:#5F5496; --geo2:#E6E2F2;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#131A16; --bg2:#1B2420; --panel:#1F2A25; --ink:#E6ECE7; --ink2:#B4C0B8; --mute:#7D8A82; --line:#31403A;
+  --acc:#72C69C; --acc2:#22392E; --acc-ink:#9BDDBB; --rose:#E08A83; --rose2:#3D2624; --amber:#E0B35C; --amber2:#3A3120;
+  --blue:#7FA9DA; --blue2:#1F2E42; --good:#72C69C; --bad:#E08A83; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+  --geo:#B4A9E4; --geo2:#2A2640;
+}}
+:root[data-theme="dark"]{
+  --bg:#131A16; --bg2:#1B2420; --panel:#1F2A25; --ink:#E6ECE7; --ink2:#B4C0B8; --mute:#7D8A82; --line:#31403A;
+  --acc:#72C69C; --acc2:#22392E; --acc-ink:#9BDDBB; --rose:#E08A83; --rose2:#3D2624; --amber:#E0B35C; --amber2:#3A3120;
+  --blue:#7FA9DA; --blue2:#1F2E42; --good:#72C69C; --bad:#E08A83; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+  --geo:#B4A9E4; --geo2:#2A2640;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.5}
+button{font:inherit;cursor:pointer;color:inherit}
+h1,h2,h3{font-family:var(--serif);font-weight:700;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,4.5vw,2.8rem)}
+h2{font-size:1.35rem}
+h3{font-size:1.05rem}
+.eyebrow{font-size:.76rem;letter-spacing:.09em;text-transform:uppercase;color:var(--acc-ink);font-weight:700}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px 70px}
+header.top{padding:26px 0 14px;display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;justify-content:space-between}
+header.top .lead{color:var(--ink2);margin:.35rem 0 0;max-width:60ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 11px;font-size:.88rem;font-weight:600;color:var(--ink2)}
+.chip b{color:var(--ink);font-variant-numeric:tabular-nums}
+.chip.est{border-style:dashed}
+.chip.sub{border-color:transparent}
+.s-biologija{background:var(--acc2);color:var(--acc-ink)}
+.s-matematika{background:var(--blue2);color:var(--blue)}
+.s-lietuviu{background:var(--amber2);color:var(--amber)}
+.s-anglu{background:var(--rose2);color:var(--rose)}
+.s-geografija{background:var(--geo2);color:var(--geo)}
+
+/* day tabs */
+.tabsbar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line);margin-bottom:18px}   /* sticky (audit 2026-09-12): the day tabs stay reachable while a long slot scrolls */
+.tabs{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:8px 4px 10px;scrollbar-width:thin}
+.tabs::-webkit-scrollbar{height:6px}
+.tab{flex:0 0 auto;scroll-snap-align:center;position:relative;min-width:62px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:8px 10px 7px;text-align:center;line-height:1.15;color:var(--ink2)}
+.tab .dw{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
+.tab .dn{display:block;font-family:var(--serif);font-size:1.35rem;font-weight:700;color:var(--ink)}
+.tab .dots{display:flex;gap:3px;justify-content:center;margin-top:5px;height:6px}
+.tab .dots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.tab .dots i.on{background:var(--acc)}
+.tab .dots i.miss{background:var(--bad)}
+.tab .dots i.free{background:transparent;border:1px solid var(--line)}
+.tab.sel{border-color:var(--acc);background:var(--acc2);color:var(--acc-ink)}
+.tab.past{opacity:.72}
+.tab.exam::after{content:"🎯";position:absolute;top:-9px;right:-6px;font-size:.9rem}
+.tab.due .dw::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--rose);margin-left:4px;vertical-align:2px}
+.tab.month{min-width:auto;border:none;background:transparent;writing-mode:vertical-rl;transform:rotate(180deg);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:4px 2px;cursor:default}
+.tab.gap{border-style:dashed;color:var(--mute);font-size:.85rem;min-width:auto;padding:8px 12px;display:flex;align-items:center}
+.tab.today{border-color:transparent;color:var(--ink);isolation:isolate}
+.tab.today::before{content:"";position:absolute;inset:-3px;border-radius:17px;z-index:-1;
+  background:conic-gradient(from var(--ang,0deg),var(--sun),var(--day),var(--moon),var(--acc),var(--sun));
+  animation:spin 3.2s linear infinite}
+.tab.today>span,.tab.today>div{position:relative}
+.tab.today .in{position:absolute;inset:0;border-radius:14px;background:var(--panel);z-index:-1}
+.tab.today.sel .in{background:var(--acc2)}
+.tab.today .dn{animation:pulse 2.4s ease-in-out infinite}
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spin{to{--ang:360deg}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@media (prefers-reduced-motion:reduce){.tab.today::before,.tab.today .dn{animation:none}}
+
+/* day panel */
+.dayhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-bottom:12px}
+.dayhead h2{font-size:1.7rem}
+.dayhead .sum{color:var(--ink2)}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+@media (max-width:900px){.slots{grid-template-columns:1fr}}
+.slot{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:96px}   /* the sticky tab bar must not cover the „Dabar“ heading when the page scrolls to a slot (glance round 13) */
+.slot.done{opacity:.78}
+.slot.done .shead{background:var(--acc2)}
+.slot.rest{box-shadow:none;background:transparent;border-style:dashed}
+.shead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--bg2)}
+.shead .ico{font-size:1.35rem;line-height:1}
+.shead h3{flex:1}
+.shead .min{font-size:.82rem;color:var(--mute);font-variant-numeric:tabular-nums}
+.sbody{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.part{display:flex;flex-direction:column;gap:10px}
+.part .ph{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--mute);letter-spacing:.05em;text-transform:uppercase;font-weight:700}
+.sfoot{padding:10px 14px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:7px 13px;font-weight:600;font-size:.92rem}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.ok{border-color:var(--good);color:var(--good)}
+.btn.no{border-color:var(--bad);color:var(--bad)}
+.btn.sm{padding:4px 9px;font-size:.82rem}
+.btn:focus-visible,.item:focus-visible,.tab:focus-visible,.flip:focus-visible,.opt:focus-visible,.roomg:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.freebox{padding:22px 14px;text-align:center;color:var(--mute)}   /* audit 2026-09-12: ".free" also hit the tab dots <i class="free"> and drew 30-px arcs */
+.freebox b{display:block;font-family:var(--serif);font-size:1.3rem;color:var(--ink2)}
+.slot.now{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc2),var(--shadow)}
+.shead .nowchip{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--acc-ink);background:var(--acc2);border-radius:999px;padding:2px 9px}
+.sync{font-size:.78rem;color:var(--mute);white-space:nowrap}
+.sync.on{color:var(--acc-ink)}
+.dl.collapsed ul{display:none}
+.dltog{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:3px 11px;font-size:.82rem;font-weight:600;min-height:32px;color:var(--ink2)}
+.dl .next1{display:block;font-size:.92rem;color:var(--ink2);padding:6px 0 8px}
+
+/* items */
+.item[data-toggle]{cursor:pointer}
+.item{border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:var(--bg);display:flex;flex-direction:column;gap:6px;text-align:left}
+.item .k{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.item .k .p{margin-left:auto;font-family:var(--serif);font-size:.95rem;color:var(--ink);letter-spacing:0;text-transform:none}
+.item .t{font-weight:600}
+.item .a{display:none;border-top:1px dashed var(--line);padding-top:8px;margin-top:2px}
+.item.open .a{display:block}
+.item .steps{margin:.5rem 0 0;padding-left:1.15rem}
+.item .steps li{margin:.15rem 0}
+.item .why{font-size:.86rem;color:var(--ink2);margin-top:6px}
+.mem{margin-top:8px;font-size:.92rem}
+.mem b{display:block;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--acc-ink)}
+.mem .hooks{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.mem .ms{color:var(--ink2);font-style:italic}
+.rchip{border:1px solid var(--acc);background:var(--acc2);color:var(--acc-ink);border-radius:999px;padding:2px 10px;font-size:.84rem;font-weight:600}
+.hchip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:2px 10px;font-size:.84rem}
+.judge{display:flex;gap:8px;margin-top:6px}
+.judge .btn{min-height:44px;min-width:44px}
+.flip{position:relative;min-height:88px;border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:12px 14px;text-align:left;display:block;width:100%}
+.flip .side{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:700}
+.flip .f{font-weight:700;font-size:1.1rem;font-family:var(--serif)}
+.flip .b{display:none;margin-top:6px}
+.flip .b .kw{font-family:var(--serif);font-weight:700;color:var(--acc-ink);font-size:1.05rem}
+.flip.on .f{opacity:.55;font-size:.95rem}
+.flip.on .b{display:block}
+.tile{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:10px 12px;width:100%;text-align:left}
+.tile .v{font-family:var(--serif);font-weight:700;font-size:1.1rem;color:var(--acc-ink);min-width:3ch;text-align:right;filter:blur(7px);transition:filter .2s}
+.tile.on .v{filter:none}
+.opts{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.opt{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:8px 11px;text-align:left}
+.opt.right{border-color:var(--good);background:var(--acc2)}
+.opt.wrong{border-color:var(--bad);background:var(--rose2)}
+.expl{display:none;font-size:.9rem;color:var(--ink2);margin-top:6px}
+.item.answered .expl{display:block}
+.mn{border-left:3px solid var(--amber);padding:6px 12px;background:var(--panel);border-radius:0 10px 10px 0}
+.mn b{font-family:var(--serif);font-size:1.05rem;display:block}
+.mn span{font-size:.92rem;color:var(--ink2)}
+.catch{border:1px dashed var(--amber);background:var(--amber2);border-radius:12px;padding:10px 14px;margin-bottom:14px;color:var(--ink)}
+.catch b{color:var(--amber)}
+
+/* deadlines: what falls due on this day and next, always with the clock time */
+.dl{border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:10px 14px 4px;margin:0 0 14px}
+.dlh{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px}
+.dlh h3{font-size:1rem}
+.dlh .livest{margin-left:auto;font-size:.8rem;color:var(--mute);font-weight:600}
+.dlh .livest.on{color:var(--acc-ink)}
+.dlh .livest.warn{color:var(--rose)}
+.dl ul{list-style:none;margin:6px 0 0;padding:0}
+.dl li{display:grid;grid-template-columns:14.5rem minmax(0,1fr) auto;gap:2px 16px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line)}
+.dl .when{font-weight:700;font-variant-numeric:tabular-nums}
+.dl .clk{font-family:var(--serif);font-size:1.12rem;margin-left:6px}
+.dl .nt{display:block;font-weight:600;font-size:.84rem;color:var(--mute)}
+.dl li.on .when{color:var(--rose)}
+.dl .ttl{font-weight:600}
+.dl .sub2{display:block;font-size:.84rem;color:var(--ink2)}
+.dl .it+.it{margin-top:8px}
+.dl .rel{font-size:.86rem;color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums}
+.who{display:inline-block;border-radius:999px;padding:0 8px;margin-left:6px;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;vertical-align:1px}
+.who.tu{background:var(--amber2);color:var(--amber)}
+.who.sis{background:var(--panel);color:var(--ink2);border:1px solid var(--line)}
+@media (max-width:640px){.dl li{grid-template-columns:minmax(0,1fr) auto}.dl .what{grid-column:1/-1;grid-row:2}.dlh .livest{margin-left:0;flex-basis:100%}}
+
+/* assessments */
+.assess{margin-top:34px}
+section,h2{scroll-margin-top:120px}
+.arow{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:10px}
+.acard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.acard .n{font-weight:700}
+.acard .d{font-size:.9rem;color:var(--ink2)}
+.acard .bar{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-top:4px;display:flex}
+.acard .bar i{display:block;height:100%;background:var(--acc)}
+.acard .bar i.meas{background:var(--amber)}
+.acard .cov{font-size:.82rem;color:var(--mute);display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.acard .ms{font-size:.84rem;color:var(--geo);font-weight:600}
+.pastwrap{margin-top:26px}
+.pastbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.pastbtn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 12px;font-weight:600;font-size:.92rem;display:flex;gap:8px;align-items:center}
+.pastbtn .g{font-family:var(--serif);color:var(--acc-ink)}
+.archive{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.92rem;color:var(--ink2);max-height:320px;overflow:auto}
+.archive div{padding:3px 0;border-bottom:1px dotted var(--line)}
+footer{margin-top:40px;color:var(--mute);font-size:.85rem}
+footer a{color:var(--acc-ink)}
+
+/* palace dialog */
+dialog#palace{border:none;border-radius:16px;padding:0;max-width:min(96vw,980px);width:100%;background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+dialog#palace::backdrop{background:rgba(10,20,15,.55)}
+.pwrap{padding:16px 18px 18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.pwrap{grid-template-columns:1fr}}
+.pwrap svg{width:100%;height:auto;background:var(--bg2);border:1px solid var(--line);border-radius:12px}
+.pwrap .room rect{fill:var(--bg2);stroke:var(--line);stroke-width:2;transition:fill .15s}
+.pwrap .room{cursor:pointer}
+.pwrap .room:hover rect{fill:var(--acc2)}
+.pwrap .room.on rect{fill:var(--acc2);stroke:var(--acc);stroke-width:3}
+.pwrap .room.done rect{stroke:var(--acc)}
+.pwrap .room text{font-family:var(--sans);font-size:13px;fill:var(--ink);pointer-events:none}
+.pwrap .room text.rn{font-family:var(--serif);font-size:17px;font-weight:700}
+.pwrap .room text.ro{font-size:11.5px;fill:var(--ink2)}
+.pwrap .route{fill:none;stroke:var(--amber);stroke-width:3;stroke-dasharray:7 6}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px 0}
+.stop{border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:200px;background:var(--bg)}
+.stop .scene{color:var(--ink2);margin:.3rem 0 .6rem}
+.stop.recall .scene,.stop.recall .hk .b{display:none}
+.stop .hk{border:1px solid var(--line);border-radius:9px;padding:7px 10px;margin-top:6px;background:var(--panel)}
+.stop .hk .kw{font-family:var(--serif);font-weight:700;color:var(--acc-ink)}
+.stop .hk .b{font-size:.92rem;color:var(--ink2)}
+.stop.recall .hk.show .b{display:block}
+.walkbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.walkbar .pos{margin-left:auto;color:var(--mute);font-variant-numeric:tabular-nums}
+.small{font-size:.85rem;color:var(--mute)}
+.asum{margin-top:8px;font-size:.92rem}.asum summary{cursor:pointer;color:var(--acc-ink);font-weight:600}
+/*__BOARD_CSS__*/
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="eyebrow">3 × 5 min per dieną, prireikus iki 20 · tik įskaitoms ir egzaminams</div>
+    <h1>Mokymosi planas</h1>
+    <p class="lead" id="lead"></p>
+  </div>
+  <div class="chips" id="topchips"></div>
+</header>
+
+<div class="tabsbar"><div class="tabs" id="tabs" role="tablist" aria-label="Dienos"></div></div>
+
+<div id="catch"></div>
+<div class="dayhead"><h2 id="dtitle"></h2><span class="sum" id="dsum"></span><button class="btn sm" id="todayBtn" style="margin-left:auto">Šiandien</button></div>
+<section class="dl" id="dl" aria-label="Terminai"></section>
+<div class="slots" id="slots"></div>
+
+<section class="assess">
+  <div class="eyebrow">Artimiausi tikslai</div>
+  <h2>Įskaitos ir egzaminai</h2>
+  <div class="arow" id="arow"></div>
+</section>
+
+<section class="pastwrap" id="pastwrap" hidden>
+  <div class="eyebrow">Jau praėjo</div>
+  <h2>Praėję testai ir egzaminai</h2>
+  <p class="small">Kiekvienas – po savo mygtuku, kad nesimaišytų su tuo, kas dar laukia.</p>
+  <div class="pastbtns" id="pastbtns"></div>
+  <div id="archive"></div>
+</section>
+
+<footer id="foot"></footer>
+</div>
+
+<dialog id="palace">
+  <div class="phead"><div><div class="eyebrow">Atminties rūmai</div><h2 id="ptitle">Kelias per tavo butą</h2></div><button class="btn sm" id="pclose">Uždaryti</button></div>
+  <div class="pwrap"><div><div id="psvg"></div>
+    <div class="walkbar"><button class="btn primary" id="walkNext">Kitas kambarys →</button><button class="btn" id="walkMode">Iš atminties</button><button class="btn" id="walkReset">Nuo pradžių</button><span class="pos" id="walkPos"></span></div>
+  </div><div class="stop" id="stop"></div></div>
+</dialog>
+
+<script>/*__BOARD_JS__*/</script>
+<script>
+(function(){
+const PLAN = /*__PLAN__*/null;
+if(!PLAN){document.getElementById('lead').textContent='Planas dar nesugeneruotas.';return;}
+const U=PLAN.units, T=PLAN.topics, A=PLAN.assessments, DAYS=PLAN.days;
+const SLOT_META={rytas:['☀️','Rytas'],diena:['🌤️','Diena'],vakaras:['🌙','Vakaras']};
+const SUBJ={biologija:'Biologija',matematika:'Matematika',lietuviu:'Lietuvių',anglu:'Anglų',geografija:'Geografija'};
+const byId={}; A.forEach(a=>byId[a.id]=a);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+const TODAY=todayISO();
+const LT_M=['sausio','vasario','kovo','balandžio','gegužės','birželio','liepos','rugpjūčio','rugsėjo','spalio','lapkričio','gruodžio'];
+const LT_MS=['Saus','Vas','Kov','Bal','Geg','Birž','Liep','Rugp','Rugs','Spal','Lapkr','Gruod'];
+const LT_D=['sekmadienis','pirmadienis','antradienis','trečiadienis','ketvirtadienis','penktadienis','šeštadienis'];
+const fmtLong=iso=>{const d=new Date(iso+'T12:00:00');return LT_M[d.getMonth()]+' '+d.getDate()+' d., '+LT_D[d.getDay()];};
+const addDays=(iso,n)=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+let DL=PLAN.deadlines||[];
+const LT_DS=['Sk','Pr','An','Tr','Kt','Pn','Št'];
+const dayDiff=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);
+const hasDue=date=>DL.some(x=>x.date===date);
+// the page lives for days between republishes: "upcoming" and "days left" are counted from the viewer's today, not the build day
+const isUp=a=>a.date>=TODAY;
+const daysLeft=a=>dayDiff(TODAY,a.date);
+const isRest=s=>s.phase==='free'||s.phase==='before-start';
+const SLOT=PLAN.slotSec||300;   // a slot's own "cap" overrides it (owner 2026-09-10: up to 20 min a day when a test needs it)
+const BAKED=A.map(a=>({id:a.id,date:a.date,time:a.time,confidence:a.confidence,title:a.title}));
+
+// ---------- progress: localStorage now, shared db when the viewer grants it ----------
+const KEY='planas.v1';
+let P={done:{},rec:{},again:{},doneItems:{}};
+try{P=Object.assign(P,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+let dbDoc=null, saveTimer=null;
+const SYNC={local:false,remote:0};   // truthful save state (collab 2026-09-12): local persistence and confirmed remote sync are shown separately
+function paintSync(){document.querySelectorAll('.slot.done .sfoot .small').forEach(el=>{const b=el.querySelector('.sync');const h=syncBadge();if(b)b.outerHTML=h;else el.insertAdjacentHTML('beforeend',' '+h);});}
+function newer(x,y){const m={};for(const k of new Set([...Object.keys(x||{}),...Object.keys(y||{})])){const a=+(x||{})[k]||0,b=+(y||{})[k]||0;m[k]=Math.abs(b)>Math.abs(a)?b:a;}return m;}
+function merge(a,b){const out={done:newer(a.done,b.done),rec:Object.assign({},a.rec),again:newer(a.again,b.again),doneItems:newer(a.doneItems,b.doneItems)};
+  for(const k in (b.rec||{})){const x=out.rec[k]||{ok:0,bad:0,last:0,lastOk:false};const y=b.rec[k];out.rec[k]={ok:Math.max(x.ok,y.ok||0),bad:Math.max(x.bad,y.bad||0),last:Math.max(x.last,y.last||0),lastOk:(y.last||0)>=(x.last||0)?!!y.lastOk:x.lastOk,failAt:Math.max(x.failAt||0,y.failAt||0)};}   // failAt survives the merge (glance round 9)
+  return out;}
+let dirty=false;   // a tap made before the db handshake resolved is pushed once the doc exists (audit 2026-09-12: it was merged from remote but never uploaded)
+let saveRev=0, writing=false, queued=false;   // every edit is a revision; writes are SERIALISED: one in flight, edits made meanwhile flush right after it (glance rounds 3 and 10)
+function flush(){if(!dbDoc)return;if(writing){queued=true;return;}writing=true;const rev=saveRev;
+  dbDoc.set({done:P.done,rec:P.rec,again:P.again,doneItems:P.doneItems||{},updatedAt:new Date().toISOString(),day:TODAY})
+    .then(()=>{if(rev===saveRev){dirty=false;SYNC.failed=false;SYNC.remote=Date.now();paintSync();}})   // a successful retry clears the failure badge (glance round 11)
+    .catch(()=>{if(rev===saveRev){SYNC.failed=true;paintSync();setTimeout(()=>{if(dirty&&rev===saveRev)flush();},8000);}})   // a failed write shows as such and retries
+    .finally(()=>{writing=false;if(queued){queued=false;flush();}});}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(P));SYNC.local=true;}catch(e){}
+  dirty=true;SYNC.remote=0;SYNC.failed=false;++saveRev;paintSync();   // the badge drops "sinchronizuota" the moment a new edit starts (glance round 12)
+  if(dbDoc){clearTimeout(saveTimer);saveTimer=setTimeout(flush,600);}}
+// dbDoc is exposed only AFTER the remote history is read and merged, so a tap during the read can never overwrite it (glance 2026-09-12);
+// a tap made meanwhile is pushed right after the merge
+(async()=>{try{if(!window.claude||!window.claude.use)return;const db=await window.claude.use('db');if(!db)return;const doc=db.doc('progress/main');
+  const snap=await doc.get();if(snap.exists){const remote=snap.data()||{};const rm=merge({done:{},rec:{},again:{},doneItems:{}},remote);P=merge(P,remote);
+    if(JSON.stringify(P)!==JSON.stringify(rm))dirty=true;   // offline work from an earlier visit is uploaded on reconnect (glance 2026-09-12)
+    try{localStorage.setItem(KEY,JSON.stringify(P));}catch(e){}dbDoc=doc;renderAll();if(dirty)save();}
+  else{dbDoc=doc;save();}
+  dbDoc.onSnapshot(s=>{if(s.exists&&!s.metadata.hasPendingWrites){P=merge(P,s.data()||{});renderAll();}},()=>{});
+}catch(e){}})();
+
+// ---------- live deadlines: study/planas-live.json re-read from the viewer's Google Drive (owner 2026-09-10) ----------
+// The workspace lives in Google Drive; the PC's MoodleWatch / StudyAgent tasks rewrite that one small file whenever Moodle adds or
+// moves a deadline, so the strip and the dates update without a republish. Without the connector the page shows the build's copy.
+const LIVE_Q="title = 'planas-live.json' and parentId = '1b7oghPlrWbQpZNVOKG35kUCzb-pUw2E1'";
+let LIVE={state:'plan',checkedAt:null,msg:''};
+// a trace a later session reads back (Artifact read_db collection live, doc status) - the only proof that the live route works on
+// the owner's own device, where the connector consent and the Drive polling actually happen (decision review 2026-09-10)
+let lastReport='';
+function reportLive(o){const k=JSON.stringify(o);if(k===lastReport)return;lastReport=k;
+  (async()=>{try{if(!window.claude||!window.claude.use)return;const db=await window.claude.use('db');if(db)await db.doc('live/status').set(Object.assign({at:new Date().toISOString(),day:TODAY},o));}catch(e){}})();}
+function applyLive(data,cached){
+  if(!data||data.v!==1||!Array.isArray(data.deadlines)||!Array.isArray(data.assessments))return false;
+  DL=data.deadlines;
+  data.assessments.forEach(x=>{const a=byId[x.id];if(a&&x.date){a.date=x.date;a.time=x.time;a.confidence=x.confidence;if(x.title)a.title=x.title;}});
+  LIVE={state:'live',checkedAt:data.checkedAt||null,msg:''};
+  if(!cached){try{localStorage.setItem('planas.live',JSON.stringify(data));}catch(e){}reportLive({state:'live',writtenAt:data.writtenAt||null,checkedAt:data.checkedAt||null,deadlines:data.deadlines.length});}
+  return true;
+}
+function retractLive(msg){DL=PLAN.deadlines||[];BAKED.forEach(b=>{const a=byId[b.id];if(a){a.date=b.date;a.time=b.time;a.confidence=b.confidence;a.title=b.title;}});
+  try{localStorage.removeItem('planas.live');}catch(e){}LIVE={state:msg?'error':'plan',checkedAt:null,msg:msg||''};}
+function onLiveError(e){const c=(e&&e.code)||'';reportLive({state:'error',code:c||'unknown'});
+  if(c==='needs_reauth'){retractLive('Terminai nesiatnaujina: prisijunk prie Google Drive iš naujo (claude.ai → Settings → Connectors)');}
+  else if(c==='server_not_connected'||c==='selection_required'||c==='server_not_found'){retractLive('Kad terminai atsinaujintų patys, prijunk Google Drive (claude.ai → Settings → Connectors)');}
+  else if(['not_in_manifest','not_granted','blocked_by_policy','approval_required','capability_disabled','capability_removed'].includes(c)){retractLive('');}
+  else if(LIVE.state!=='live'){LIVE={state:'error',checkedAt:null,msg:'Nepavyko atnaujinti terminų – rodoma plano kopija'};}
+  renderAll();}
+try{const c=JSON.parse(localStorage.getItem('planas.live')||'null');if(c&&(c.writtenAt||'')>=(PLAN.generatedAt||'').slice(0,16))applyLive(c,true);}catch(e){}
+(async()=>{let mcp=null;try{mcp=(window.claude&&window.claude.use)?await window.claude.use('mcp'):null;}catch(e){}
+  if(!mcp)return;
+  let server=null;
+  try{const lt=await mcp.listTools();const s=(lt.servers||[]).find(x=>x.kind!=='artifact'&&(x.tools||[]).some(t=>t.name==='download_file_content'));server=s?s.server:null;}catch(e){}
+  if(!server){onLiveError({code:'server_not_connected'});return;}
+  let lastKey='';
+  const load=async payload=>{
+    const files=((payload||{}).files||[]).slice().sort((a,b)=>String(b.modifiedTime||'').localeCompare(String(a.modifiedTime||'')));
+    const f=files[0];if(!f)return;
+    const key=f.id+'|'+(f.modifiedTime||'');if(key===lastKey)return;
+    try{const r=await mcp.callTool(server,'download_file_content',{fileId:f.id},{cache:false});
+      const bin=atob(String(((r&&r.payload)||{}).content||''));const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      if(applyLive(JSON.parse(new TextDecoder('utf-8').decode(bytes)),false)){lastKey=key;renderAll();}
+    }catch(e){onLiveError(e);}
+  };
+  const input={query:LIVE_Q,pageSize:5,excludeContentSnippets:true};
+  let fellBack=false;
+  mcp.watchTool(server,'search_files',input,ev=>{
+    if(ev.type==='data'){load(ev.result&&ev.result.payload);return;}
+    const e=ev.error||{};
+    if(e.code==='bad_request'&&!fellBack){fellBack=true;mcp.callTool(server,'search_files',input).then(r=>load(r&&r.payload)).catch(onLiveError);return;}
+    onLiveError(e);
+  },{refetchInterval:15*60*1000});
+})();
+
+// ---------- catch-up: missed new/test items of the last 7 days flow into the next slots (≤120 s each) ----------
+function slotKey(d,s){return d+'|'+s;}
+function computeCatchup(){
+  const missed=[];const di=P.doneItems||{};const planned=new Set();DAYS.forEach(d=>{if(d.date>=TODAY)d.slots.forEach(s=>s.items.forEach(it=>{if(it.mode==='new'||it.mode==='test')planned.add(it.u);}));});
+  DAYS.forEach(d=>{if(d.date<TODAY)d.slots.forEach(s=>{if(!isRest(s)&&!(P.done[slotKey(d.date,s.slot)]>0))s.items.forEach(it=>{if((it.mode==='new'||it.mode==='test')&&!(di[it.u]>0)&&!planned.has(it.u))missed.push(Object.assign({},it,{from:d.date}));});});});
+  // fill the coming undone slots up to each slot's own budget (slot's seconds + catch-up <= its cap, 300 s unless stretched); nothing ages out
+  const extra={}; let i=0;
+  for(const d of DAYS){if(d.date<TODAY)continue;for(const s of d.slots){if(i>=missed.length)break;if(s.phase==='before-start'||(P.done[slotKey(d.date,s.slot)]>0))continue;let sec=s.sec||0;const list=[];
+    while(i<missed.length){const it=missed[i];const u=U[it.u];if(!u){i++;continue;}if(sec+(u.sec||30)>(s.cap||SLOT))break;list.push(it);sec+=u.sec||30;i++;}
+    if(list.length)extra[slotKey(d.date,s.slot)]=list;}
+    if(i>=missed.length)break;}
+  return {missed,extra,left:Math.max(0,missed.length-i)};
+}
+
+// ---------- rendering helpers ----------
+const subjChip=s=>`<span class="chip sub s-${s}">${SUBJ[s]||s}</span>`;
+function roomChip(topic,r){const t=T[topic];const n=t&&t.rooms[r]?t.rooms[r].n.split(' = ')[0]:('Kambarys '+(r+1));return `<button class="rchip" data-room="${r}" data-topic="${topic}">🚪 ${esc(n)}</button>`;}
+function hookChip(topic,kw){const t=T[topic];let term='';if(t)for(const r of t.rooms)for(const h of r.hooks)if(h[1]===kw)term=h[0];return `<span class="hchip">${esc(kw)}${term?' → '+esc(term):''}</span>`;}
+function memBlock(u){if(!u.rooms&&!u.hooks&&!u.s)return '';return `<div class="mem"><b>${tr(u,'Kaip įsiminti')}</b><div class="hooks">${(u.rooms||[]).map(r=>roomChip(u.topic,r)).join('')}${(u.hooks||[]).map(h=>hookChip(u.topic,h)).join('')}</div>${u.s?`<div class="ms">${esc(u.s)}</div>`:''}</div>`;}
+const EN={'Nemoku':'Not yet','Moku':'I know','Pirma išspręsk pats, tada spausk ir pasitikrink':'Do it yourself first, then press and check','Atverti lentą ✍️':'Open the board ✍️','Užuomina: ':'Hint: ','Pirma atsakyk mintyse, tada spausk':'Answer in your head first, then press','Kodėl tikėtina: ':'Why likely: ','Prisimink atsakymą, tada pasitikrink':'Recall the answer, then check','Terminas':'Term','Kas tai?':'What is it?','Kortelė':'Card','Įrašyk atsakymą mintyse, tada spausk':'Fill in the answer in your head, then press','Kaip įsiminti':'How to remember','Moku ✓':'I know ✓','Grįš kitame lange 🔁':'Comes back in a later slot 🔁'};
+function tr(u,s){return (u&&u.lang==='en'&&EN[s])||s;}   // English lessons in English (owner 2026-09-12): a unit's own chrome follows its lesson's language
+function judge(uid,u){u=u||U[uid];return `<div class="judge"><button class="btn sm no" data-j="bad" data-u="${uid}">${tr(u,'Nemoku')}</button><button class="btn sm ok" data-j="ok" data-u="${uid}">${tr(u,'Moku')}</button></div>`;}
+function calcItem(u,lab){const en=u.lang==='en';const strip=(window.Board&&Board.calcHtml)?Board.calcHtml(u.calc,u.lang):`<div class="small">${esc(u.a)}</div>`;
+  return `<div class="item q" data-toggle="1" role="button" tabindex="0">${lab}<div class="k"><span>🔢 ${en?'Calculator drill':'Skaičiuotuvo treniruotė'}</span></div><div class="t">${u.q}</div><div class="small">${en?'Take your calculator, get the answer yourself, then press and compare the keys':'Paimk skaičiuotuvą, gauk atsakymą pats, tada spausk ir palygink klavišus'}</div><div class="a">${strip}${u.n?`<div class="small">${esc(u.n)}</div>`:''}${judge(u.id,u)}</div></div>`;}
+function steps(u){return (u.steps&&u.steps.length)?`<ol class="steps">${u.steps.map(x=>`<li>${x}</li>`).join('')}</ol>`:'';}
+// the handwritten maths board (tools/board.js): replaces the text steps where a unit carries one; mounted when its item opens
+function ab(u,mode){return (u.board&&window.Board)?`${board(u,mode)}<details class="asum"><summary>Santrauka – atsakymas žodžiais</summary>${u.a}</details>`:`${u.a}${steps(u)}`;}   // reviewer 2026-09-10: the answer must not spoil the board
+function board(u,mode){return (u.board&&window.Board)?`<div class="bdh" data-bd="${u.id}" data-mode="${mode}"></div>`:steps(u);}
+function qr(u){const rec=P.rec[u.id]||{},n=(u.o||[]).length,k=(u.kind==='rule'&&n)?((rec.ok||0)+(rec.bad||0))%n:0,ord=[...Array(n).keys()].map(j=>(j+k)%n);return {o:ord.map(j=>u.o[j]),r:ord.indexOf(u.r)};}   // a rule drill's right option moves every attempt (reviewer 2026-09-11)
+function levelFor(u,mode){if(mode==='new'||u.type==='practice')return 0;   // the hub opens a practice board to CHECK work already done on paper: answer key first (reviewer idea 2026-09-11)
+ const r=P.rec[u.id];if(!r)return 0;return 0;}   // glance round 6: faded levels cost unplanned seconds - the hub always opens in watch mode; fading = topic pages + mode buttons   // backward fading: watch -> finish -> solo
+function mountIn(el){if(!el)return;const bb=el.querySelector(':scope > button.btn.sm[aria-expanded]');if(bb){const op=el.classList.contains('open');bb.setAttribute('aria-expanded',String(op));bb.textContent=op?'Užverti ✕':'Atverti lentą ✍️';}if(!window.Board||!el.classList.contains('open'))return;el.querySelectorAll('[data-bd]:not([data-bd-on])').forEach(b=>{const u=U[b.dataset.bd];if(u)Board.mount(b,u.board,{level:levelFor(u,b.dataset.mode)});});}
+function recUnit(uid,ok){const r=P.rec[uid]||{ok:0,bad:0,last:0,lastOk:false};if(ok){r.ok++;r.lastOk=true;P.again[uid]=-Date.now();}else{r.bad++;r.lastOk=false;r.failAt=Date.now();P.again[uid]=Date.now();}r.last=Date.now();P.rec[uid]=r;save();}   // failAt: the planner restarts the ladder from it even if a repeat went well before the rebuild
+function mountMistakes(){if(!window.Board)return;document.querySelectorAll('[data-mk]:not([data-bd-on])').forEach(el=>{const u=U[el.dataset.mk];if(!u)return;
+  Board.mistake(el,{board:u.board,bad:u.bad,fix:u.fix,e:u.e,tip:u.tip},{onResult:ok=>{recUnit(u.id,ok);const it=el.closest('.item');if(it)it.style.borderColor=ok?'var(--good)':'var(--bad)';}});});}
+function label(mode,u){const L=(u&&u.lang==='en')?{new:'New',review:'Recall',test:'As in the test',pretest:'Before the test',catch:'Missed'}:{new:'Nauja',review:'Prisimink',test:'Kaip teste',pretest:'Prieš testą',catch:'Praleista'};return L[mode]||mode;}
+
+function renderItem(it,mode){
+  const u=U[it.u]; if(!u)return '';
+  const lab=`<span data-uid="${u.id}" hidden></span><div class="k"><span>${label(mode,u)}</span>${mode==='catch'?`<span>${u.lang==='en'?'from':'iš'} ${esc(it.from.slice(5))}</span>`:''}${u.type==='question'?`<span class="p" title="${u.lang==='en'?'Probability estimate from the material, not a measured frequency':'Tikimybės įvertis pagal medžiagą, ne išmatuotas dažnis'}">~${Math.round(u.w*100)} % <small>${u.lang==='en'?'estimate':'įvertis'}</small></span>`:''}${u.c==='calc'?'<span title="Skaičiuotuvas daro aritmetiką">🔢 skaičiuotuvas daro</span>':u.c==='head'?'<span title="Skaičiuotuvas nepadės">🧠 reikia galvos</span>':u.c==='both'?'<span>🧠 + 🔢</span>':''}</div>`;
+  const rec=P.rec[u.id];const seen=rec&&(rec.ok+rec.bad)>0;
+  if(u.kind==='calc'&&u.calc)return calcItem(u,lab);
+  if(u.type==='practice'){
+    return `<div class="item q" data-toggle="1" ${u.board&&window.Board?'':'role="button" tabindex="0"'}>${lab}${u.t?`<div class="small">${esc(u.t)}</div>`:''}<div class="t">${u.q}</div><div class="small">${tr(u,'Pirma išspręsk pats, tada spausk ir pasitikrink')}</div>${u.board&&window.Board?`<button class="btn sm" type="button" aria-expanded="false">${tr(u,'Atverti lentą ✍️')}</button>`:''}<div class="a">${ab(u,mode)}${u.hint?`<div class="small">${tr(u,'Užuomina: ')}${u.hint}</div>`:''}${judge(u.id)}</div></div>`;
+  }
+  if(u.type==='question'){
+    if(mode==='new'||mode==='pretest'||mode==='catch')
+      return `<div class="item q" data-toggle="1" ${u.board&&window.Board?'':'role="button" tabindex="0"'}>${lab}<div class="t">${u.q}</div><div class="small">${tr(u,'Pirma atsakyk mintyse, tada spausk')}</div>${u.board&&window.Board?`<button class="btn sm" type="button" aria-expanded="false">${tr(u,'Atverti lentą ✍️')}</button>`:''}<div class="a">${ab(u,mode)}${u.why?`<div class="why">${tr(u,'Kodėl tikėtina: ')}${esc(u.why)}</div>`:''}${memBlock(u)}</div></div>`;
+    return `<div class="item q" data-toggle="1" ${u.board&&window.Board?'':'role="button" tabindex="0"'}>${lab}<div class="t">${u.q}</div><div class="small">${tr(u,'Prisimink atsakymą, tada pasitikrink')}</div>${u.board&&window.Board?`<button class="btn sm" type="button" aria-expanded="false">${tr(u,'Atverti lentą ✍️')}</button>`:''}<div class="a">${ab(u,mode)}${memBlock(u)}${judge(u.id)}</div></div>`;
+  }
+  if(u.type==='hook'){
+    const room=T[u.topic]&&T[u.topic].rooms[u.room]?T[u.topic].rooms[u.room].n.split(' = ')[0]:'';
+    return `<div class="item">${lab}<button class="flip" data-flip="1"><span class="side">${mode==='new'?tr(u,'Terminas'):tr(u,'Kas tai?')} · 🚪 ${esc(room)}</span><div class="f">${esc(u.term)}</div><div class="b"><div class="kw">${esc(u.kw)}</div><div>${esc(u.img)}</div></div></button>${mode==='new'?'':judge(u.id)}</div>`;
+  }
+  if(u.type==='number'){
+    return `<div class="item">${lab}<button class="tile" data-tile="1"><span>${esc(u.label)}</span><span class="v">${esc(u.value)}</span></button>${mode==='new'?'':judge(u.id)}</div>`;
+  }
+  if(u.type==='card'){
+    return `<div class="item">${lab}<button class="flip" data-flip="1"><span class="side">${tr(u,'Kortelė')}</span><div class="f">${u.q}</div><div class="b">${u.a}</div></button>${judge(u.id)}</div>`;
+  }
+  if(u.type==='quiz'){
+    if(u.kind==='error'&&!window.Board)return `<div class="item q" data-toggle="1" role="button" tabindex="0">${lab}<div class="t">🔍 ${esc(u.s)}</div><div class="small">Klaidingo sprendimo parodyti nepavyko – spausk ir perskaityk tipinę klaidą</div><div class="a">${u.e}${u.tip?`<div class="small">${u.tip}</div>`:''}${judge(u.id)}</div></div>`;
+    if(u.kind==='error')return `<div class="item">${lab}<div class="k"><span>🔍 Rask klaidą${u.t?' · '+esc(u.t):''}</span></div><div class="t">${esc(u.s)}</div><div data-mk="${u.id}"></div></div>`;
+    if(!u.o||!u.o.length)return `<div class="item q" data-toggle="1" ${u.board&&window.Board?'':'role="button" tabindex="0"'}>${lab}<div class="t">${esc(u.s)}</div><div class="small">${tr(u,'Įrašyk atsakymą mintyse, tada spausk')}</div><div class="a">${esc(u.e)}${judge(u.id)}</div></div>`;
+    return `<div class="item quiz" data-r="${qr(u).r}" data-u="${u.id}">${lab}${u.kind==='rule'?'<div class="k"><span>🧭 Kurią taisyklę taikysi?</span></div>':''}<div class="t">${esc(u.kind==='rule'?u.s.replace(/^Kurią taisyklę taikysi\? /,''):u.s)}</div><div class="opts">${qr(u).o.map((o,i)=>`<button class="opt" data-opt="${i}">${esc(o)}</button>`).join('')}</div><div class="expl">${esc(u.e)}</div></div>`;
+  }
+  if(u.type==='vbe'){
+    return `<div class="item vbe" data-toggle="1" ${u.board&&window.Board?'':'role="button" tabindex="0"'}>${lab}<div class="k"><span>VBE ${esc(u.year)}${u.session&&u.session!=='pagrindinė'?' ('+esc(u.session)+')':''} · ${esc(u.number)} · ${esc(u.points)} t. · ${esc(u.form)}</span></div><div class="t" style="white-space:pre-line">${esc(u.question)}</div><div class="small">Atsakyk raštu ar mintyse, tada tikrink pagal vertinimo instrukciją</div><div class="a"><b>Atsakymas:</b> <span style="white-space:pre-line">${esc(u.answer)}</span><div class="small">Šaltinis: ${esc(u.source)}</div>${judge(u.id)}</div></div>`;
+  }
+  if(u.type==='mnemonic'){return `<div class="mn"><b>${esc(u.b)}</b><span>${esc(u.s)}</span></div>`;}
+  return '';
+}
+
+function renderSlot(day,s,extra){
+  const key=slotKey(day.date,s.slot), done=P.done[key]>0;
+  const meta=SLOT_META[s.slot];
+  const catchItems=extra[key]||[];
+  const ownSec=(s.sec||0)+catchItems.reduce((n,it)=>n+((U[it.u]||{}).sec||30),0);
+  const again=Object.keys(P.again).filter(k=>P.again[k]>0&&U[k]).slice(0,Math.max(0,Math.min(5,Math.floor(((s.cap||SLOT)-ownSec)/15))));
+  let body='';
+  if(s.phase==='before-start'){body=`<div class="freebox"><b>Dar nepradėta</b>Mokytis pradedi ${esc(fmtLong(PLAN.start||day.date))}, nuo lango „${esc((SLOT_META[PLAN.startSlot]||['','Rytas'])[1])}“ – iki tol nieko nepraleidi.</div>`;}
+  else if(s.phase==='free'&&!catchItems.length){body=`<div class="freebox"><b>Laisva</b>Nieko mokytis nereikia 🎉</div>`;}
+  else{
+    if(catchItems.length)body+=`<div class="part"><div class="ph">⏪ Pasivijimas · ${catchItems.length}</div>${catchItems.map(it=>renderItem(it,'catch')).join('')}</div>`;
+    if(again.length&&day.date>=TODAY&&!done&&s.phase!=='free'&&s.phase!=='pretest')body+=`<div class="part"><div class="ph">🔁 Pakartok, ko nemokėjai</div>${again.map(k=>renderItem({u:k},'review')).join('')}</div>`;
+    s.parts.forEach(p=>{const a=byId[p.assessment]||{};const en=p.items.length&&p.items.every(it=>U[it.u]&&U[it.u].lang==='en');   // an English part keeps its header in English too (audit 2026-09-12)
+      const ph=(en?{learn:'New material',review:'Recall',imitation:'As in the test',pretest:'Before the test – reminders only',practice:'Practice – first pass'}:{learn:'Nauja medžiaga',review:'Pakartojimas',imitation:'Testo imitacija',pretest:'Prieš testą – tik priminti',practice:'Pratybos – pirmas kartas'})[p.phase]||p.phase;
+      body+=`<div class="part"><div class="ph">${subjChip(p.subject)} ${ph} · ${Math.round(p.sec/60)||1} min <span class="small" style="text-transform:none;letter-spacing:0">${esc(a.title||'')}</span></div>${p.items.map(it=>renderItem(it,it.mode)).join('')}</div>`;});
+  }
+  const secs=s.phase==='before-start'?0:ownSec+again.length*15;
+  const now=day.date===TODAY&&s.slot===nowSlot()&&!isRest(s);   // the slot that matches the clock is marked "Dabar" and scrolled to (audit 2026-09-12: no "now" cue on a phone)
+  return `<article class="slot ${done?'done':''} ${s.phase==='before-start'?'rest':''} ${now?'now':''}" data-key="${key}" data-slot="${s.slot}"><div class="shead"><span class="ico">${meta[0]}</span><h3>${meta[1]}</h3>${now&&!done?'<span class="nowchip">Dabar</span>':''}<span class="min">${secs?Math.max(1,Math.round(secs/60))+' min':''}</span></div><div class="sbody">${body}</div>${(!isRest(s)||catchItems.length)?`<div class="sfoot"><span class="small">${done?'Atlikta ✓ '+syncBadge():'~'+Math.max(1,Math.round((secs||SLOT)/60))+' min, tada pažymėk'}</span><button class="btn ${done?'':'primary'}" data-done="${key}">${done?'Atšaukti':'Baigta ✓'}</button></div>`:''}</article>`;
+}
+const nowSlot=()=>{const h=new Date().getHours();return h<12?'rytas':h<17?'diena':'vakaras';};   // the viewer's own clock (the phone is in Lithuania)
+function syncBadge(){if(!SYNC.local)return '';if(SYNC.failed)return '<span class="sync" style="color:var(--rose)">☁ nepavyko išsaugoti debesyje – bandau dar</span>';return SYNC.remote?`<span class="sync on">☁ sinchronizuota ${pad(new Date(SYNC.remote).getHours())}:${pad(new Date(SYNC.remote).getMinutes())}</span>`:dbDoc?'<span class="sync">☁ siunčiama…</span>':'<span class="sync">išsaugota šiame įrenginyje</span>';}
+let scrolledOnce=false;
+function scrollToNow(){if(scrolledOnce||selected!==TODAY)return;const d=DAYS.find(x=>x.date===TODAY);if(!d)return;scrolledOnce=true;
+  const el=document.querySelector('.slot.now:not(.done)')||[...document.querySelectorAll('.slot:not(.done):not(.rest)')].find(x=>!x.classList.contains('done'));
+  if(el&&el.getBoundingClientRect().top>window.innerHeight*0.55)el.scrollIntoView({block:'start',behavior:'auto'});}
+
+// ---------- tabs ----------
+let selected=(PLAN.start&&PLAN.start>TODAY&&DAYS.some(d=>d.date===PLAN.start))?PLAN.start:TODAY;   // before the start, open on the first study day
+function dayState(d){const st=d.slots.map(s=>{if(isRest(s))return 'free';if((P.done[slotKey(d.date,s.slot)]>0))return 'on';return d.date<TODAY?'miss':'';});return st;}
+function isExamDay(date){return A.some(a=>isUp(a)&&a.date===date&&(a.topics||[]).length);}
+function renderTabs(){
+  const box=document.getElementById('tabs');box.innerHTML='';
+  const start=addDays(TODAY,-7);
+  const shown=DAYS.filter(d=>d.date>=start);
+  let lastMonth='',gapRun=[];
+  const flush=()=>{if(gapRun.length>=3){const first=gapRun[0].date,last=gapRun[gapRun.length-1].date;const b=document.createElement('button');b.className='tab gap';b.textContent=gapRun.length+' laisvų d.';b.title=first+' … '+last;b.onclick=()=>{select(first);};box.appendChild(b);}else gapRun.forEach(d=>box.appendChild(tabEl(d)));gapRun=[];};
+  shown.forEach(d=>{const m=d.date.slice(0,7);
+    const free=d.slots.every(s=>s.phase==='free')&&d.date>TODAY&&!isExamDay(d.date)&&!hasDue(d.date);
+    if(m!==lastMonth){flush();const ml=document.createElement('span');ml.className='tab month';ml.textContent=LT_MS[+d.date.slice(5,7)-1]+' '+d.date.slice(0,4);box.appendChild(ml);lastMonth=m;}
+    if(free)gapRun.push(d);else{flush();box.appendChild(tabEl(d));}});
+  flush();
+  const sel=box.querySelector('.tab.sel');if(sel)sel.scrollIntoView({inline:'center',block:'nearest'});
+}
+function tabEl(d){const b=document.createElement('button');b.className='tab'+(d.date===TODAY?' today':'')+(d.date===selected?' sel':'')+(d.date<TODAY?' past':'')+(isExamDay(d.date)?' exam':(hasDue(d.date)?' due':''));b.setAttribute('role','tab');b.dataset.date=d.date;
+  const dn=+d.date.slice(8,10);b.innerHTML=`<span class="in"></span><span class="dw">${d.dow}</span><span class="dn">${dn}</span><div class="dots">${dayState(d).map(x=>`<i class="${x}"></i>`).join('')}</div>`;b.onclick=()=>select(d.date);return b;}
+function select(date){selected=date;renderTabs();renderDay();}
+
+// ---------- day ----------
+function renderDay(){
+  const d=DAYS.find(x=>x.date===selected);
+  const cu=computeCatchup();
+  const catchBox=document.getElementById('catch');
+  catchBox.innerHTML=(cu.missed.length&&selected===TODAY)?`<div class="catch"><b>Praleista ${cu.missed.length}</b> · nesuspėti dalykai iš praėjusių dienų įsilieja į artimiausius langus, neviršijant lango laiko${cu.left?`; ${cu.left} dar laukia vėlesnių langų`:''}. Nieko neprarandi.</div>`:'';
+  renderDeadlines(selected);
+  if(!d){document.getElementById('dtitle').textContent=fmtLong(selected);document.getElementById('dsum').textContent='Šios dienos plane nėra.';document.getElementById('slots').innerHTML='';return;}
+  document.getElementById('dtitle').textContent=(d.date===TODAY?'Šiandien · ':'')+fmtLong(d.date);
+  const exams=A.filter(a=>a.date===d.date);
+  const subs=[...new Set(d.slots.flatMap(s=>s.parts.map(p=>p.subject)))];
+  document.getElementById('dsum').innerHTML=(exams.length?exams.map(a=>`🎯 ${esc(a.subjectName)}: ${esc(a.title)}${a.confidence==='estimated'?' (data tikslinama)':''}`).join(' · ')+' · ':'')+(subs.length?subs.map(subjChip).join(' '):'laisva diena');
+  document.getElementById('slots').innerHTML=d.slots.map(s=>renderSlot(d,s,cu.extra)).join('');
+}
+
+// ---------- deadlines: every day shows what falls due on it and next, always with the clock time ----------
+function fmtDue(iso){const d=new Date(iso+'T12:00:00');return LT_M[d.getMonth()]+' '+d.getDate()+' d. ('+LT_DS[d.getDay()]+')';}
+function fmtStamp(s){const d=new Date(s);return isNaN(d)?'':LT_M[d.getMonth()]+' '+d.getDate()+' d. '+pad(d.getHours())+':'+pad(d.getMinutes());}
+function dlItem(x){
+  const est=x.confidence==='estimated';
+  const kind={test:'Mokykloje',exam:'Valstybinis egzaminas',assign:'Moodle darbas',quiz:'Moodle testas','online-test':'Moodle testas namuose, laikas ribotas','quiz-open':'Moodle testas atsidaro – tai ne terminas'}[x.kind]||'Moodle terminas';
+  const sent=/^(submitted|verified|graded)$/.test(x.status||'');
+  const who=x.who==='sistema'?`<span class="who sis">${sent?'Išsiųsta ✓':'Atlieka sistema'}</span>`:`<span class="who tu">Tau</span>`;
+  const meta=[kind,(x.time==='24:00'&&x.due)?'Moodle: '+fmtStamp(x.due):'',est?'data ir laikas apytiksliai':'',(x.who==='sistema'&&x.sendAt&&!sent)?'išsiųs '+fmtStamp(x.sendAt):''].filter(Boolean).join(' · ');
+  return `<div class="it">${SUBJ[x.subject]?subjChip(x.subject)+' ':''}<span class="ttl">${esc(x.title)}</span>${who}<span class="sub2">${esc(meta)}</span></div>`;
+}
+function dlGroup(g,day){   // one row per date + clock time: several įskaitos at one hour read as one row
+  const x=g[0], n=dayDiff(day,x.date), nt=dayDiff(TODAY,x.date), est=g.some(y=>y.confidence==='estimated');
+  // every countdown on the page counts from the viewer's real today (reviewer 2026-09-10: the lead said 18 d. while the selected future day's row said 17 d.)
+  const rel=nt===0?'šiandien':nt===1?'rytoj':nt<0?'praėjo':'po '+nt+' d.';
+  const clock=x.time?`<span class="clk">${est?'~':''}${esc(x.time)}</span>`:`<span class="nt">laikas dar nepaskelbtas</span>`;
+  return `<li class="${n===0?'on':''}"><span class="when">${fmtDue(x.date)}${clock}</span><span class="what">${g.map(dlItem).join('')}</span><span class="rel">${rel}</span></li>`;
+}
+function liveBadge(){
+  if(LIVE.state==='live'){const c=LIVE.checkedAt;const old=c&&(Date.now()-new Date(c).getTime())>16*3600e3;
+    return old?`<span class="livest warn">⚠️ Moodle netikrintas nuo ${esc(fmtStamp(c))} – ar kompiuteris įjungtas?</span>`:`<span class="livest on">● atnaujinama automatiškai${c?' · Moodle tikrinta '+esc(fmtStamp(c)):''}</span>`;}
+  if(LIVE.state==='error')return `<span class="livest warn">${esc(LIVE.msg)}</span>`;
+  return `<span class="livest">plano kopija · ${esc(PLAN.generatedAt.replace('T',' ').slice(5,16))}</span>`;
+}
+let dlUser={day:null,open:undefined};   // the toggle the viewer made on the currently shown day
+function renderDeadlines(day){
+  const on=DL.filter(x=>x.date===day), next=DL.filter(x=>x.date>day);
+  let pick=next.filter(x=>dayDiff(day,x.date)<=14);
+  if(pick.length<3){pick=next.slice(0,3);const last=pick.length?pick[pick.length-1].date:null;for(let i=pick.length;i<next.length&&next[i].date===last;i++)pick.push(next[i]);}
+  const rows=on.concat(pick), groups=[];
+  rows.forEach(x=>{const k=x.date+'|'+(x.time||''), g=groups[groups.length-1];if(g&&g.k===k)g.push(x);else{const ng=[x];ng.k=k;groups.push(ng);}});
+  // collapsed to one line on the day view (audit 2026-09-12: on a phone the list pushed the first study item 1.3 screens down); a day with its own deadline opens expanded
+  // a day with its own deadline opens expanded when entered; a toggle made on that day is honoured until another day is chosen (glance rounds 6-7)
+  let open=on.length>0;try{const v=localStorage.getItem('planas.dlopen');if(v==='1')open=true;}catch(e){}
+  if(dlUser.day===day&&dlUser.open!==undefined)open=dlUser.open;
+  const first=rows[0];
+  const one=first?`${fmtDue(first.date)} ${first.time?(first.confidence==='estimated'?'~':'')+first.time:'laikas dar nepaskelbtas'}${first.confidence==='estimated'?' · apytiksliai':''} · ${SUBJ[first.subject]||''} ${first.title}`.trim():'Artimiausių terminų nėra.';
+  document.getElementById('dl').className='dl'+(open?'':' collapsed');
+  document.getElementById('dl').innerHTML=`<div class="dlh"><h3>Terminai</h3><span class="small">${on.length?(day===TODAY?'šiandien':'šią dieną')+': '+on.length+' · ':''}artimiausi, su valanda</span>${liveBadge()}<button class="dltog" type="button" aria-expanded="${open}" aria-controls="dlist">${open?'Suskleisti':'Rodyti visus ('+rows.length+')'}</button></div>`+(open?'':`<span class="next1">${esc(one)}</span>`)+(rows.length?`<ul id="dlist">${groups.map(g=>dlGroup(g,day)).join('')}</ul>`:'<p class="small">Artimiausių terminų nėra.</p>');
+}
+
+// ---------- assessments ----------
+function measured(a){let tot=0,ok=0,judged=0;for(const uid in U){const u=U[uid];if(!(a.topics||[]).includes(u.topic))continue;if(!['question','hook','number'].includes(u.type)&&!(u.type==='card'&&u.learn))continue;tot++;const r=P.rec[uid];if(r&&(r.ok+r.bad)>0)judged++;if(r&&r.ok>=2&&r.lastOk)ok++;}return (tot&&judged)?ok/tot:null;}
+function renderAssess(){
+  const row=document.getElementById('arow');const up=A.filter(isUp).sort((a,b)=>a.date.localeCompare(b.date)||String(a.time||'').localeCompare(String(b.time||'')));
+  row.innerHTML=up.map(a=>{const c=a.coverage||{};const cov=c.weighted;const m=measured(a);const ms=a.kind==='online-test';
+    return `<div class="acard"><div class="n">${subjChip(a.subject)} ${esc(a.title)}</div><div class="d">${esc(a.date)}${a.time?' · '+(a.confidence==='estimated'?'~':'')+esc(a.time):''} · liko <b>${daysLeft(a)}</b> d.${a.confidence==='estimated'?' · <span class="chip est" style="padding:1px 8px;font-size:.78rem">apytiksliai</span>':''}</div>
+      ${ms?`<div class="ms">Laikai namuose – tema išmokstama iki šios dienos, be papildomo laiko</div>`:''}
+      ${cov==null?`<div class="small">Mokymosi dalys dar neparuoštos${(a.waiting||[]).length?' – laukia: '+esc(a.waiting.join(', ')):''}</div>`:
+      `<div class="bar"><i style="width:${Math.round(cov*100)}%"></i></div><div class="cov"><span>${ms?'Temos suplanuota iki testo':'Paskelbtos medžiagos suplanuota'} ${Math.round(cov*100)} %</span><span>Išmokta (pamatuota) ${m==null?'–':Math.round(m*100)+' %'}</span></div>
+       <div class="small">${c.units} dalių${ms?'':` · imitacija ${c.imitationPlaced}/${c.imitationTotal} per ${c.imitationDays} d.`}${c.imitationSkipped?` (${c.imitationSkipped} VBE užd. be paveikslo ar instrukcijos praleistos)`:''}${(a.waiting||[]).length?' · <b>visos aprėptis dar nežinoma</b>, laukia: '+esc(a.waiting.join(', ')):''}</div>`}</div>`;}).join('');
+  const past=A.filter(a=>!isUp(a));
+  const pw=document.getElementById('pastwrap');pw.hidden=!past.length;
+  const grades=PLAN.grades||[];
+  document.getElementById('pastbtns').innerHTML=past.map(a=>{const g=grades.find(x=>x.assessment===a.id);return `<button class="pastbtn" data-past="${a.id}" aria-expanded="false">${subjChip(a.subject)} ${esc(a.title)} · ${esc(a.date)}${g?` <span class="g">${esc(g.grade)}</span>`:''}</button>`;}).join('');
+  const lead=document.getElementById('lead');const next=up.filter(a=>(a.topics||[]).length)[0]||up[0];
+  const first=(PLAN.start&&PLAN.start>=TODAY)?`${PLAN.start===TODAY?'Pirma diena':'Pradedame'} – ${fmtLong(PLAN.start)}, nuo lango „${(SLOT_META[PLAN.startSlot]||['',''])[1]}“.`:`Šiandien ${fmtLong(TODAY)}.`;
+  lead.textContent=next?`${first} Artimiausias tikslas – ${next.subjectName.toLowerCase()}: ${next.title}, liko ${daysLeft(next)} d. Kas dieną trys trumpi langai, dažniausiai po 5 min (daugiausia 20 min per dieną).`:'Nėra būsimų įskaitų ar egzaminų.';
+  const streak=(()=>{let n=0;for(let i=1;i<400;i++){const dd=addDays(TODAY,-i);const day=DAYS.find(x=>x.date===dd);if(!day)break;const need=day.slots.filter(s=>!isRest(s));if(!need.length)continue;if(need.every(s=>P.done[slotKey(dd,s.slot)]>0))n++;else break;}return n;})();
+  const gl=grades.slice(-3).map(g=>`<span class="chip">${esc(g.subjectName||g.subject)} <b>${esc(g.grade)}</b></span>`).join('');
+  document.getElementById('topchips').innerHTML=`<span class="chip">Serija <b>${streak}</b> d.</span>${up.filter(a=>a.topics&&a.topics.length).slice(0,2).map(a=>`<span class="chip ${a.confidence==='estimated'?'est':''}">${esc(a.subjectName)} <b>${daysLeft(a)} d.</b></span>`).join('')}${gl}`;
+  document.getElementById('foot').innerHTML=`Planas sugeneruotas ${esc(PLAN.generatedAt.replace('T',' ').slice(0,16))} · kartojimo intervalai ${PLAN.intervals.join(', ')} d. · pilnos temos: ${Object.values(T).map(t=>`<a href="${esc(t.page.replace('study/',''))}" target="_blank" rel="noopener">${esc(t.title)}</a>`).join(', ')}`;
+}
+function renderArchive(id){const box=document.getElementById('archive');if(!id){box.innerHTML='';return;}
+  const rows=[];DAYS.forEach(d=>d.slots.forEach(s=>s.parts.filter(p=>p.assessment===id).forEach(p=>rows.push(`<div>${d.date} · ${SLOT_META[s.slot][1]} · ${p.phase} · ${p.items.length} dalys${(P.done[slotKey(d.date,s.slot)]>0)?' ✓':''}</div>`))));
+  box.innerHTML=`<div class="archive">${rows.join('')||'<div>Įrašų nėra.</div>'}</div>`;}
+
+// ---------- palace ----------
+const dlg=document.getElementById('palace');let pTopic=null,rIdx=0,recall=false;
+function openPalace(topic,r){const t=T[topic];if(!t||!t.palaceSvg)return;pTopic=topic;document.getElementById('ptitle').textContent=t.title+' – kelias per tavo butą';document.getElementById('psvg').innerHTML=t.palaceSvg;
+  document.querySelectorAll('#psvg .room').forEach(g=>{g.classList.add('roomg');g.onclick=()=>room(+g.dataset.r);g.onkeydown=e=>{if(e.key==='Enter')room(+g.dataset.r);};});
+  room(r||0);if(!dlg.open)dlg.showModal();}
+function room(i){const t=T[pTopic];rIdx=i;document.querySelectorAll('#psvg .room').forEach((g,j)=>{g.classList.toggle('on',j===i);g.classList.toggle('done',j<i);});const r=t.rooms[i];if(!r)return;
+  const st=document.getElementById('stop');st.classList.toggle('recall',recall);
+  st.innerHTML=`<div class="eyebrow">Kambarys ${i+1} / ${t.rooms.length}</div><h3>${esc(r.n)}</h3><p class="scene">${esc(r.scene)}</p>${recall?'<p class="small">Prisimink, kas čia vyksta ir kokie žodžiai-kabliukai. Spausk terminą, kad pasitikrintum.</p>':''}${r.hooks.map(h=>`<div class="hk" tabindex="0"><span class="kw">${esc(h[0])}</span> — <span class="b"><b>${esc(h[1])}</b> · ${esc(h[2])}</span></div>`).join('')}`;
+  st.querySelectorAll('.hk').forEach(el=>{el.onclick=()=>el.classList.toggle('show');});
+  document.getElementById('walkPos').textContent=(i+1)+' / '+t.rooms.length;}
+document.getElementById('walkNext').onclick=()=>{const t=T[pTopic];room((rIdx+1)%t.rooms.length);};
+document.getElementById('walkMode').onclick=e=>{recall=!recall;e.target.textContent=recall?'Rodyti viską':'Iš atminties';room(rIdx);};
+document.getElementById('walkReset').onclick=()=>room(0);
+document.getElementById('pclose').onclick=()=>dlg.close();
+dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close();});
+
+// ---------- events ----------
+document.addEventListener('click',e=>{
+  const rc=e.target.closest('.rchip');if(rc){e.preventDefault();e.stopPropagation();openPalace(rc.dataset.topic,+rc.dataset.room);return;}
+  const j=e.target.closest('[data-j]');if(j){e.stopPropagation();const uid=j.dataset.u;recUnit(uid,j.dataset.j==='ok');
+    const it=j.closest('.item');if(it){it.style.borderColor=j.dataset.j==='ok'?'var(--good)':'var(--bad)';j.parentElement.innerHTML=`<span class="small">${j.dataset.j==='ok'?tr(U[j.dataset.u],'Moku ✓'):tr(U[j.dataset.u],'Grįš kitame lange 🔁')}</span>`;}return;}
+  const opt=e.target.closest('.opt');if(opt){const q=opt.closest('.quiz');if(q.classList.contains('answered'))return;q.classList.add('answered');const r=+q.dataset.r;const right=+opt.dataset.opt===r;q.querySelectorAll('.opt').forEach((o,i)=>{if(i===r)o.classList.add('right');else if(o===opt)o.classList.add('wrong');});const uid=q.dataset.u;if(uid)recUnit(uid,right);return;}
+  const fl=e.target.closest('.flip');if(fl){fl.classList.toggle('on');return;}
+  const tl=e.target.closest('.tile');if(tl){tl.classList.toggle('on');return;}
+  const dn=e.target.closest('[data-done]');if(dn){const k=dn.dataset.done;if(P.done[k]>0){P.done[k]=-Date.now();P.doneItems=P.doneItems||{};dn.closest('.slot').querySelectorAll('[data-uid]').forEach(el=>{if(P.doneItems[el.dataset.uid]>0)P.doneItems[el.dataset.uid]=-Date.now();});}else{P.done[k]=Date.now();P.doneItems=P.doneItems||{};dn.closest('.slot').querySelectorAll('[data-uid]').forEach(el=>{P.doneItems[el.dataset.uid]=Date.now();});}save();renderTabs();renderDay();renderAssess();return;}
+  const dt=e.target.closest('.dltog');if(dt){const open=dt.getAttribute('aria-expanded')!=='true';dlUser={day:selected,open};try{localStorage.setItem('planas.dlopen',open?'1':'0');}catch(e2){}renderDeadlines(selected);return;}
+  const pb=e.target.closest('[data-past]');if(pb){const open=pb.getAttribute('aria-expanded')==='true';document.querySelectorAll('[data-past]').forEach(b=>b.setAttribute('aria-expanded','false'));if(open){renderArchive(null);}else{pb.setAttribute('aria-expanded','true');renderArchive(pb.dataset.past);}return;}
+  const cs=e.target.closest('[data-calc]');if(cs&&window.Board&&Board.playCalc){Board.playCalc(cs,e.target);return;}   // one key per tap (owner 2026-09-12)
+  const tg=e.target.closest('[data-toggle]');if(tg&&!e.target.closest('.judge')&&!e.target.closest('.a a')&&!e.target.closest('details')){tg.classList.toggle('open');mountIn(tg);return;}
+});
+document.getElementById('todayBtn').onclick=()=>select(TODAY);
+document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea'))return;if(e.key==='Enter'&&e.target.matches('.item[data-toggle]')){e.target.classList.toggle('open');mountIn(e.target);return;}if(e.key==='ArrowRight'){const i=DAYS.findIndex(d=>d.date===selected);if(i>=0&&DAYS[i+1])select(DAYS[i+1].date);}if(e.key==='ArrowLeft'){const i=DAYS.findIndex(d=>d.date===selected);if(i>0)select(DAYS[i-1].date);}});
+
+function renderAll(){renderTabs();renderDay();renderAssess();scrollToNow();}
+if(!DAYS.some(d=>d.date===TODAY)){const f=DAYS.find(d=>d.date>TODAY);if(f)selected=f.date;else if(DAYS.length)selected=DAYS[DAYS.length-1].date;}
+renderAll();
+try{let mq=0;const obs=new MutationObserver(()=>{if(!mq)mq=requestAnimationFrame(()=>{mq=0;mountMistakes();});});['slots','archive'].forEach(id=>{const n=document.getElementById(id);if(n)obs.observe(n,{childList:true,subtree:true});});}catch(e){}
+mountMistakes();
+})();
+</script>

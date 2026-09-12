@@ -1,0 +1,498 @@
+<title>{{TITLE}}</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Caveat:wght@500;600;700&family=Shantell+Sans:wght@400;600;700&display=swap">
+<style>
+:root{
+  --bg:#F5F7F3; --bg2:#EBEFE8; --panel:#FFFFFF; --ink:#1F2A24; --ink2:#4E5C55; --mute:#8A968F; --line:#D5DDD6;
+  --acc:#2E7D5B; --acc2:#DCEDE3; --acc-ink:#1E5C42; --rose:#B4524B; --rose2:#F1DEDC; --amber:#B98A2E; --amber2:#F3E8CF;
+  --good:#2E7D5B; --bad:#B4524B; --shadow:0 1px 2px rgba(20,30,25,.06),0 6px 20px rgba(20,30,25,.06);
+  --serif:"Fraunces",Georgia,"Times New Roman",serif; --sans:"Source Sans 3","Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#131A16; --bg2:#1B2420; --panel:#1F2A25; --ink:#E6ECE7; --ink2:#B4C0B8; --mute:#7D8A82; --line:#31403A;
+  --acc:#72C69C; --acc2:#22392E; --acc-ink:#9BDDBB; --rose:#E08A83; --rose2:#3D2624; --amber:#E0B35C; --amber2:#3A3120;
+  --good:#72C69C; --bad:#E08A83; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+}}
+:root[data-theme="dark"]{
+  --bg:#131A16; --bg2:#1B2420; --panel:#1F2A25; --ink:#E6ECE7; --ink2:#B4C0B8; --mute:#7D8A82; --line:#31403A;
+  --acc:#72C69C; --acc2:#22392E; --acc-ink:#9BDDBB; --rose:#E08A83; --rose2:#3D2624; --amber:#E0B35C; --amber2:#3A3120;
+  --good:#72C69C; --bad:#E08A83; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.5}
+a{color:var(--acc-ink)}
+button{font:inherit;cursor:pointer}
+h1,h2,h3{font-family:var(--serif);font-weight:700;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:700}
+h2{font-size:1.7rem;margin-bottom:.35rem}
+h3{font-size:1.15rem}
+.eyebrow{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--acc-ink);font-weight:700}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+header.top{padding:40px 0 22px;border-bottom:1px solid var(--line);margin-bottom:26px}
+header.top p.lead{max-width:62ch;color:var(--ink2);margin:.6rem 0 0}
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:34px;align-items:start}
+.layout>*{min-width:0}
+main{min-width:0}
+nav.rail{position:sticky;top:16px;display:flex;flex-direction:column;gap:2px}
+nav.rail a{display:block;padding:7px 10px;border-radius:6px;text-decoration:none;color:var(--ink2);font-weight:600;font-size:.95rem}
+nav.rail a:hover{background:var(--bg2);color:var(--ink)}
+nav.rail .n{display:inline-block;width:1.4em;color:var(--mute);font-variant-numeric:tabular-nums}
+section{margin:0 0 54px;scroll-margin-top:16px}
+section>p.intro{color:var(--ink2);max-width:66ch;margin:.2rem 0 1rem}
+.plan{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.plan div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.plan b{display:block;font-family:var(--serif);font-size:1.15rem;color:var(--acc-ink)}
+.plan span{font-size:.92rem;color:var(--ink2)}
+/* memory palace */
+.palace{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:start}
+.palace svg{width:100%;height:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.room{cursor:pointer}
+.room rect{fill:var(--bg2);stroke:var(--line);stroke-width:2;transition:fill .15s}
+.room:hover rect{fill:var(--acc2)}
+.room.on rect{fill:var(--acc2);stroke:var(--acc);stroke-width:3}
+.room.done rect{stroke:var(--acc)}
+.room text{font-family:var(--sans);font-size:13px;fill:var(--ink);pointer-events:none}
+.room text.rn{font-family:var(--serif);font-size:16px;font-weight:700}
+.room text.ro{font-size:11.5px;fill:var(--ink2)}
+.route{fill:none;stroke:var(--amber);stroke-width:3;stroke-dasharray:7 6}
+.stop{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-height:300px}
+.stop h3{color:var(--acc-ink);font-size:1.4rem}
+.stop .scene{font-family:var(--serif);font-size:1.12rem;line-height:1.4;margin:.5rem 0 .8rem;padding:10px 12px;background:var(--amber2);border-radius:8px}
+.stop .scene.hid{color:transparent;user-select:none;position:relative}
+.stop .scene.hid::after{content:"Kas čia vyksta? Pirma prisimink, tada spausk „Rodyti“";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink2);font-family:var(--sans);font-size:.95rem;text-align:center;padding:0 12px}
+.hooks2{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.hk{border:1px solid var(--line);border-left:4px solid var(--rose);background:var(--bg);border-radius:0 10px 10px 0;padding:9px 11px;text-align:left;color:inherit;min-height:74px;display:flex;flex-direction:column;justify-content:center}
+.hk .kw{font-family:var(--serif);font-weight:700;font-size:1.02rem}
+.hk .tm{font-size:.86rem;color:var(--ink2);margin-top:3px}
+.hk .mean{display:none;font-size:.9rem;margin-top:4px}
+.hk.open .mean{display:block}
+.hk.open{border-left-color:var(--acc);background:var(--panel)}
+.hk.open .tm{color:var(--acc-ink);font-weight:700}
+.hk.hidtm .tm{visibility:hidden}
+.hk.hidtm.open .tm{visibility:visible}
+.walkbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.walkbar .pos{font-size:.9rem;color:var(--ink2);margin-left:auto;font-variant-numeric:tabular-nums}
+@media (max-width:860px){.palace{grid-template-columns:1fr}.stop{min-height:0}}
+/* ranked questions */
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 13px;font-weight:600;font-size:.93rem}
+.btn:hover{border-color:var(--acc)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:focus-visible,.q:focus-visible,.organ:focus-visible,.card:focus-visible,.cell:focus-visible,.stat:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.qlist{display:flex;flex-direction:column;gap:8px}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;text-align:left;color:inherit;width:100%}
+.q .p{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.25rem;font-family:var(--serif);color:var(--ink)}
+.q .bar{height:6px;border-radius:3px;background:var(--bg2);margin-top:6px;overflow:hidden}
+.q .bar i{display:block;height:100%;background:var(--amber);border-radius:3px}
+.q .t{font-weight:600}
+.q .meta{font-size:.82rem;color:var(--mute);margin-top:2px}
+.q .a{display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);color:var(--ink)}
+.q .a .why{font-size:.85rem;color:var(--ink2);margin-top:6px}
+.q.open .a{display:block}
+.q .hint{font-size:.85rem;color:var(--acc-ink);font-weight:600;margin-top:4px}
+.q.open .hint{display:none}
+.q .mem{margin-top:8px;padding:8px 10px;background:var(--amber2);border-radius:8px;font-size:.92rem}
+.chip{display:inline-block;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:2px 9px;margin:3px 4px 0 0;font-size:.86rem;color:var(--ink)}
+.chip.room{cursor:pointer;border-color:var(--acc);color:var(--acc-ink);font-weight:600;font:inherit;font-size:.86rem}
+.q .ms{margin-top:6px;color:var(--ink)}
+.q .steps{margin:.5rem 0 0;padding-left:1.15rem}
+.q .steps li{margin:.15rem 0}
+code,.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:.95em;background:var(--bg2);border-radius:4px;padding:0 4px}
+.fml{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;background:var(--bg2);border-left:3px solid var(--acc);border-radius:0 6px 6px 0;padding:6px 10px;margin:.4rem 0;overflow-x:auto;white-space:pre-wrap}
+/* clickable figure */
+.map{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:start}
+.map svg{width:100%;height:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.organ{cursor:pointer}
+.organ .shape{stroke:var(--panel);stroke-width:2;transition:filter .15s}
+.organ:hover .shape,.organ.on .shape{filter:brightness(1.12)}
+.organ.on .shape{stroke:var(--ink);stroke-width:2.5}
+.organ text{font-family:var(--sans);font-size:13px;fill:var(--ink);font-weight:600;pointer-events:none;paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.organ text.onfill{fill:#fff;stroke:none}
+svg text.note{font-size:11px;fill:var(--mute)}
+.infobox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-height:220px;position:sticky;top:16px}
+.infobox h3{color:var(--acc-ink);font-size:1.35rem}
+.infobox .fn{margin:.5rem 0 0}
+.infobox ul{margin:.4rem 0 0;padding-left:1.1rem}
+.infobox li{margin:.2rem 0}
+.infobox .num{font-family:var(--serif);font-weight:700;color:var(--rose)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--ink2);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+/* recall table */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:680px;font-size:.95rem}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);background:var(--bg2)}
+td:first-child{font-weight:700}
+tr:last-child td{border-bottom:none}
+.cell{position:relative}
+.recall .cell.hid>span{visibility:hidden}
+.recall .cell.hid::after{content:"?";position:absolute;inset:6px 8px;border-radius:6px;background:var(--acc2);color:var(--acc-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;cursor:pointer}
+.recall .cell{cursor:pointer}
+/* phone (glance 2026-09-12): stack every row - its label, then each cell under its own column name - so no column sits off-screen */
+@media (max-width:560px){
+  #tbl{min-width:0}
+  #tbl thead{display:none}
+  #tbl,#tbl tbody,#tbl tr,#tbl td{display:block;width:100%}
+  #tbl tr{border-bottom:1px solid var(--line);padding:6px 0}
+  #tbl tr:last-child{border-bottom:none}
+  #tbl td{border-bottom:none;padding:4px 12px}
+  #tbl td.cell::before{content:attr(data-h);display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);font-weight:700;margin-bottom:2px}
+  /* the "?" mask flows under its column name instead of floating over the cell (glance 5bbdd26e: an absolute mask overlapped the next label) */
+  #tbl.recall td.cell.hid>span{display:none}
+  #tbl.recall td.cell.hid::after{position:static;inset:auto;min-height:2.2em;margin-top:2px}
+}
+.num{font-variant-numeric:tabular-nums}
+/* fact tiles */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 12px 10px;text-align:left;color:inherit;min-height:96px;display:flex;flex-direction:column;justify-content:space-between}
+.stat .l{font-size:.86rem;color:var(--ink2);line-height:1.3}
+.stat .v{font-family:var(--serif);font-size:1.45rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:6px}
+.stat.hid .v{color:transparent;background:var(--acc2);border-radius:6px;display:inline-block;padding:0 6px}
+/* flashcards */
+.deck{display:grid;grid-template-columns:1fr 240px;gap:18px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 24px;min-height:220px;box-shadow:var(--shadow);text-align:left;color:inherit;width:100%;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.card .side{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);font-weight:700}
+.card .front{font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.3}
+.card .back{font-size:1.1rem;display:none}
+.card.flipped .back{display:block}
+.card.flipped .front{font-size:1.05rem;color:var(--ink2)}
+.card .tip{font-size:.85rem;color:var(--acc-ink);font-weight:600}
+.card.flipped .tip{display:none}
+.deckside{background:var(--bg2);border-radius:12px;padding:14px 16px;font-size:.93rem}
+.deckside b{font-family:var(--serif);font-size:1.5rem;display:block;font-variant-numeric:tabular-nums}
+.deckside .row{display:flex;justify-content:space-between;margin:4px 0}
+.judge{display:flex;gap:10px;margin-top:12px}
+.judge .btn{flex:1;padding:11px}
+.judge .no{border-color:var(--rose);color:var(--rose)}
+.judge .yes{background:var(--acc);border-color:var(--acc);color:#fff}
+/* quiz */
+.quiz{display:flex;flex-direction:column;gap:14px}
+.qq{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.qq .stem{font-weight:600;margin-bottom:8px}
+.opts{display:grid;gap:6px}
+.opt{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 12px;text-align:left;color:inherit}
+.opt:hover{border-color:var(--acc)}
+.opt.right{background:var(--acc2);border-color:var(--acc);color:var(--ink)}
+.opt.wrong{background:var(--rose2);border-color:var(--rose);color:var(--ink)}
+.qq input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:min(100%,360px)}
+.fb{font-size:.92rem;margin-top:8px;color:var(--ink2)}
+.fb.ok{color:var(--good);font-weight:600}
+.fb.no{color:var(--bad);font-weight:600}
+.score{background:var(--acc2);border-radius:10px;padding:12px 16px;font-weight:600;color:var(--acc-ink);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+/* teacher's video lessons - what the slides actually showed */
+.lsn{display:flex;flex-direction:column;gap:10px}
+.lcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.lhead{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;width:100%;text-align:left;background:none;border:0;color:inherit;padding:12px 14px}
+.lhead:hover{background:var(--bg2)}
+.lhead b{font-family:var(--serif);font-size:1.06rem;display:block}
+.lhead .sum{color:var(--ink2);font-size:.93rem;margin-top:2px}
+.lhead .min{color:var(--mute);font-size:.84rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lbadge{display:inline-block;background:var(--amber2);color:var(--ink);border-radius:12px;padding:1px 9px;font-size:.8rem;font-weight:600;margin-top:6px}
+.lbadge.off{background:var(--rose2)}
+.lbody{display:none;padding:0 14px 14px;border-top:1px dashed var(--line)}
+.lcard.open .lbody{display:block}
+.beat{display:grid;grid-template-columns:66px 1fr;gap:10px;padding:6px 0;border-bottom:1px solid var(--bg2);align-items:start}
+.beat:last-child{border-bottom:0}
+.beat a,.beat span.ts{font-variant-numeric:tabular-nums;font-weight:600;font-size:.9rem;color:var(--acc-ink);text-decoration:none}
+.beat a:hover{text-decoration:underline}
+.beat .txt{font-size:.96rem}
+.ltest{margin-top:10px;padding:8px 10px;background:var(--acc2);border-radius:8px;font-size:.93rem}
+@media(max-width:720px){.beat{grid-template-columns:56px 1fr}}
+/* mnemonics */
+.mn{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.mn div{background:var(--panel);border-left:4px solid var(--amber);border-radius:0 10px 10px 0;padding:12px 14px}
+.mn.hooks div{border-left-color:var(--rose)}
+.mn b{font-family:var(--serif);font-size:1.05rem;display:block;margin-bottom:4px}
+.mn span{color:var(--ink2);font-size:.95rem}
+footer{color:var(--mute);font-size:.85rem;border-top:1px solid var(--line);padding-top:16px;max-width:70ch}
+kbd{font-family:var(--sans);font-size:.8rem;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--bg2)}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.rail{position:static;flex-direction:row;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+  nav.rail a{padding:6px 9px;font-size:.88rem;background:var(--bg2)}
+  .plan{grid-template-columns:1fr 1fr}
+  .map{grid-template-columns:1fr}
+  .infobox{position:static;min-height:0}
+  .deck{grid-template-columns:1fr}
+  .q{grid-template-columns:52px 1fr;gap:10px}
+  body{font-size:16px}
+}
+/* exam track */
+.vbestrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:.2rem 0 20px}
+.vbestrip div{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:0 10px 10px 0;padding:10px 13px}
+.vbestrip b{display:block;font-family:var(--serif);font-size:1rem;color:var(--acc-ink);margin-bottom:2px}
+.vbestrip span{font-size:.88rem;color:var(--ink2)}
+.rank{display:flex;flex-direction:column;gap:8px;margin:.2rem 0 0}
+.rank .row{display:grid;grid-template-columns:minmax(120px,168px) minmax(0,1fr) 108px;gap:12px;align-items:center}
+.rank .nm{font-weight:600;font-size:.93rem}
+.rank .tr{background:var(--bg2);border-radius:5px;height:24px;overflow:hidden}
+.rank .tr i{display:block;height:100%;background:var(--amber);border-radius:5px}
+.rank .vl{font-size:.85rem;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rankwhy{font-size:.92rem;color:var(--ink2);margin:.7rem 0 0;max-width:70ch}
+.vfilters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.vfilters select{font:inherit;font-size:.92rem;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);max-width:100%}
+.vcount{font-size:.9rem;color:var(--ink2);font-variant-numeric:tabular-nums}
+.vlist{display:flex;flex-direction:column;gap:10px}
+.vc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.vc .hd{font-family:var(--serif);font-weight:700;font-size:1.02rem;color:var(--acc-ink)}
+.vc .qt{margin:.55rem 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.95rem}
+.vc .ans{display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);white-space:pre-wrap;overflow-wrap:anywhere;font-size:.93rem}
+.vc.open .ans{display:block}
+.vc .rev{margin-top:9px}
+.vc .mem{margin-top:9px;padding:8px 10px;background:var(--amber2);border-radius:8px;font-size:.9rem}
+.vc .noans{color:var(--rose);font-style:italic}
+.train{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:12px}
+.train .pos{font-size:.88rem;color:var(--ink2);font-variant-numeric:tabular-nums}
+@media (max-width:860px){.rank .row{grid-template-columns:1fr;gap:2px}.rank .tr{height:18px}.vfilters select{flex:1 1 44%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.mistakes{display:flex;flex-direction:column;gap:18px}
+.mk-h{font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.qbd{margin:-2px 0 6px}
+.asum{margin-top:8px;font-size:.92rem}.asum summary{cursor:pointer;color:var(--acc-ink);font-weight:600}
+/*__BOARD_CSS__*/
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">{{EYEBROW}}</div>
+  <h1>{{TITLE}}</h1>
+  <p class="lead">{{LEAD}}</p>
+</header>
+
+<div class="layout">
+<nav class="rail" aria-label="Skyriai">{{RAIL}}</nav>
+
+<main>
+{{SECTIONS}}
+<footer>{{FOOTER}}</footer>
+</main>
+</div>
+</div>
+
+<script>/*__BOARD_JS__*/</script>
+<script>
+(function(){
+const M={{M}};
+const ROOMS={{ROOMS}};
+const Q={{Q}};
+const S={{S}};
+const C={{C}};
+const T={{T}};
+const VBE={{VBE}};
+const O={{O}};
+const P={{P}};
+const L={{L}};
+const SUBROOM={{SUBROOM}};
+const KEY={{KEY}};
+const $=(id)=>document.getElementById(id);
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ---------- teacher's video lessons ----------
+(function(){const box=$('lessons');if(!box||!L.length)return;
+ const secs=t=>String(t).split(':').reduce((a,b)=>a*60+(+b||0),0);
+ const jump=(l,t)=>{if(!l.url)return null;const s=secs(t);
+   if(l.src==='youtube')return l.url+(l.url.indexOf('?')>=0?'&':'?')+'t='+s+'s';
+   return l.url+(l.url.indexOf('?')>=0?'&':'?')+'t='+s;};
+ let only=false;
+ function draw(){box.innerHTML=L.map((l,i)=>{
+   if(only&&!l.test)return '';
+   const beats=(l.beats||[]).map(b=>{const u=jump(l,b[0]);
+     return `<div class="beat">${u?`<a href="${u}" target="_blank" rel="noopener">${esc(b[0])}</a>`:`<span class="ts">${esc(b[0])}</span>`}<div class="txt">${b[1]}</div></div>`;}).join('');
+   const badge=l.gone?`<div class="lbadge off">${esc(l.gone)}</div>`:(l.test?'<div class="lbadge">Teste tikėtina</div>':'');
+   return `<div class="lcard" data-i="${i}"><button class="lhead"><div><b>${esc(l.t)}</b><div class="sum">${l.sum||''}</div>${badge}</div>`+
+     `<div class="min">${l.min?esc(l.min)+' min':''}</div></button>`+
+     `<div class="lbody">${beats||'<p class="intro" style="margin:.6rem 0 0">Šios pamokos įrašo nebėra – ką ji dėstė, paimta iš mokytojos failų.</p>'}`+
+     (l.test?`<div class="ltest"><b>Kas iš čia tikėtina atsiskaityme:</b> ${l.test}</div>`:'')+`</div></div>`;}).join('');
+  box.querySelectorAll('.lhead').forEach(b=>b.onclick=()=>b.parentNode.classList.toggle('open'));}
+ draw();
+ const f=$('lOnly');if(f)f.onclick=()=>{only=!only;f.textContent=only?'Rodyti visas pamokas':'Tik tai, kas tikėtina teste';draw();};
+ const oa=$('lOpen');if(oa)oa.onclick=()=>box.querySelectorAll('.lcard').forEach(c=>c.classList.add('open'));
+ const ca=$('lClose');if(ca)ca.onclick=()=>box.querySelectorAll('.lcard').forEach(c=>c.classList.remove('open'));
+})();
+
+// ---------- memory palace ----------
+let rIdx=0,recall=false;const stop=$('stop');
+function roomName(i){return (ROOMS[i]&&ROOMS[i].n||'').split(' = ')[0];}
+function room(i){if(!stop)return;rIdx=i;document.querySelectorAll('.room').forEach((g,j)=>{g.classList.toggle('on',j===i);g.classList.toggle('done',j<i);});const r=ROOMS[i];
+ stop.innerHTML=`<h3>${r.n}</h3><div class="scene${recall?' hid':''}" id="scene">${r.scene}</div>${recall?'<div class="tools"><button class="btn" id="showScene">Rodyti sceną</button></div>':''}<div class="hooks2">${r.hooks.map((h,k)=>`<button class="hk${recall?' hidtm':''}" data-k="${k}"><span class="kw">${h[1]}</span><span class="tm">${h[0]}</span><span class="mean">${h[2]}</span></button>`).join('')}</div><p class="intro" style="margin:.8rem 0 0;font-size:.9rem">${recall?'Juokingas žodis rodomas – prisimink terminą, tada spausk kortelę.':'Spausk kortelę – pamatysi, ką kabliukas reiškia. Užsimerk ir pamatyk vaizdą 3 sekundes.'}</p>`;
+ $('walkPos').textContent=`${i+1} / ${ROOMS.length}`;
+ stop.querySelectorAll('.hk').forEach(b=>b.onclick=()=>b.classList.toggle('open'));
+ const ss=$('showScene');if(ss)ss.onclick=()=>$('scene').classList.remove('hid');
+ $('walkNext').textContent=i<ROOMS.length-1?'Kitas kambarys →':'Pradėti iš naujo';}
+if(stop){
+ document.querySelectorAll('.room').forEach(g=>{g.addEventListener('click',()=>room(+g.dataset.r));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();room(+g.dataset.r);}});});
+ $('walkNext').onclick=()=>room((rIdx+1)%ROOMS.length);
+ $('walkReset').onclick=()=>room(0);
+ $('walkMode').onclick=function(){recall=!recall;this.textContent=recall?'Rodyti viską':'Iš atminties';this.classList.toggle('primary',recall);room(rIdx);};
+ room(0);
+}
+function goRoom(i){room(i);const r=$('rumai');if(r)r.scrollIntoView({behavior:'smooth'});}
+
+// ---------- ranked questions ----------
+const qlist=$('qlist');
+function hookTerm(kw){for(const r of ROOMS)for(const h of r.hooks)if(h[1]===kw)return ' → '+h[0];return '';}
+function memBlock(m){if(!m)return '';const rooms=(m.r||[]).map(r=>`<button class="chip room" data-r="${r}">🚪 ${esc(roomName(r))}</button>`).join('');
+ const hooks=(m.h||[]).map(h=>`<span class="chip">${h}${hookTerm(h)}</span>`).join('');
+ return `<div class="mem"><b>Kaip įsiminti:</b> ${rooms}${hooks}<div class="ms">${m.s||''}</div></div>`;}
+function renderQ(list){if(!qlist)return;qlist.innerHTML='';list.forEach(it=>{const b=document.createElement('button');b.className='q';b.setAttribute('aria-expanded','false');
+ const hasBoard=!!(it.board&&window.Board);
+ const steps=hasBoard?'':it.st&&it.st.length?`<ol class="steps">${it.st.map(x=>`<li>${x}</li>`).join('')}</ol>`:'';
+ b.innerHTML=`<div><div class="p">${it.p}%</div><div class="bar"><i style="width:${it.p}%"></i></div></div><div><div class="t">${it.q}</div><div class="meta">${it.t}${hasBoard?' · ✍️ sprendimas ranka':''}${it.c==='calc'?' · 🔢 skaičiuotuvas daro':it.c==='head'?' · 🧠 reikia galvos':it.c==='both'?' · 🧠 + 🔢':''}</div><div class="hint">Rodyti atsakymą</div><div class="a">${hasBoard?'':it.a}${steps}<div class="why">Kodėl tikėtina: ${it.w}</div>${memBlock(it.m)}</div></div>`;
+ const bd=hasBoard?document.createElement('div'):null;if(bd){bd._board=it.board;bd.className='qbd';bd.hidden=true;bd.innerHTML='<div></div><details class="asum"><summary>Santrauka – atsakymas žodžiais</summary><div>'+it.a+'</div></details>';}
+ b.onclick=(e)=>{const c=e.target.closest('.chip.room');if(c){e.stopPropagation();goRoom(+c.dataset.r);return;}b.classList.toggle('open');b.setAttribute('aria-expanded',b.classList.contains('open'));
+  if(bd){bd.hidden=!b.classList.contains('open');if(!bd.hidden)Board.mount(bd.firstChild,it.board,{level:0});}};qlist.appendChild(b);if(bd)qlist.appendChild(bd);});}
+if(qlist){
+ renderQ([...Q].sort((a,b)=>b.p-a.p));
+ $('sortP').onclick=()=>renderQ([...Q].sort((a,b)=>b.p-a.p));
+ $('sortT').onclick=()=>renderQ([...Q].sort((a,b)=>a.t.localeCompare(b.t,'lt')||b.p-a.p));
+ $('openAll').onclick=()=>qlist.querySelectorAll('.q').forEach(x=>{x.classList.add('open');x.setAttribute('aria-expanded','true');const bd=x.nextElementSibling;if(bd&&bd._board){bd.hidden=false;if(window.Board)Board.mount(bd.firstChild,bd._board,{level:0});}});
+ $('closeAll').onclick=()=>qlist.querySelectorAll('.q').forEach(x=>{x.classList.remove('open');x.setAttribute('aria-expanded','false');const bd=x.nextElementSibling;if(bd&&bd._board)bd.hidden=true;});
+}
+
+// ---------- clickable figure ----------
+const info=$('info');
+if(info){document.querySelectorAll('.organ').forEach(g=>{const show=()=>{document.querySelectorAll('.organ').forEach(x=>x.classList.remove('on'));g.classList.add('on');const o=O[g.dataset.k];if(!o)return;
+ info.innerHTML=`<h3>${o.n}</h3><p class="fn">${o.f}</p><ul>${(o.k||[]).map(x=>'<li>'+x.replace(/(\d[\d,–\s]*(?:m²|mm²|cm²|l|ml|kg|m|cm|mm|val\.|%)|pH [\d,–]+)/g,'<span class="num">$1</span>')+'</li>').join('')}</ul>`;};
+ g.addEventListener('click',show);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show();}});});}
+
+// ---------- recall table ----------
+const tbl=$('tbl');
+if(tbl){
+ // recall mode is a TOGGLE: without a way back, one click hid the whole table until a page reload (2026-09-09 review)
+ $('recallBtn').onclick=function(){const on=tbl.classList.toggle('recall');
+  tbl.querySelectorAll('.cell').forEach(c=>c.classList.toggle('hid',on));
+  this.textContent=on?'Rodyti viską':'Prisiminimo režimas';this.classList.toggle('primary',on);
+  $('hideAgain').hidden=!on;};
+ $('hideAgain').hidden=true;
+ $('hideAgain').onclick=()=>{tbl.querySelectorAll('.cell').forEach(c=>c.classList.add('hid'));};
+ tbl.querySelectorAll('.cell').forEach(c=>{c.tabIndex=0;c.addEventListener('click',()=>{if(tbl.classList.contains('recall'))c.classList.toggle('hid');});c.addEventListener('keydown',e=>{if(e.key==='Enter')c.click();});});
+}
+
+// ---------- fact tiles ----------
+const stats=$('stats');
+if(stats){
+ S.forEach(([l,v])=>{const b=document.createElement('button');b.className='stat';b.innerHTML=`<span class="l">${l}</span><span class="v">${v}</span>`;b.onclick=()=>b.classList.toggle('hid');stats.appendChild(b);});
+ $('hideStats').onclick=()=>stats.querySelectorAll('.stat').forEach(x=>x.classList.add('hid'));
+ $('showStats').onclick=()=>stats.querySelectorAll('.stat').forEach(x=>x.classList.remove('hid'));
+}
+
+// ---------- flashcards (Leitner) ----------
+const card=$('card');
+if(card){
+ let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){st={}}
+ const now=()=>Date.now();
+ const INT=[0,10*60e3,24*3600e3,3*86400e3,7*86400e3,14*86400e3];
+ const due=()=>C.map((c,i)=>i).filter(i=>!(st[i]&&st[i].due>now()));
+ let cur=null,flipped=false,forceAll=false;
+ const cf=$('cfront'),cb=$('cback'),cs=$('cside');
+ function upd(){$('due').textContent=due().length;$('total').textContent=C.length;$('learned').textContent=Object.values(st).filter(s=>s.box>=3).length;const fut=Object.values(st).map(s=>s.due).filter(d=>d>now()).sort();$('next').textContent=fut.length?new Date(fut[0]).toLocaleString('lt-LT',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'–';}
+ function pick(){const d=forceAll?C.map((c,i)=>i):due();if(!d.length){cur=null;cf.textContent='Šiandien viskas pakartota. Grįžk, kai kortelės vėl lauks.';cb.textContent='';cs.textContent='Baigta';card.classList.remove('flipped');upd();return;}cur=d[Math.floor(Math.random()*d.length)];flipped=false;card.classList.remove('flipped');cs.textContent='Klausimas';cf.innerHTML=C[cur][0];cb.innerHTML=C[cur][1];upd();}
+ function flip(){if(cur===null)return;flipped=!flipped;card.classList.toggle('flipped',flipped);cs.textContent=flipped?'Atsakymas':'Klausimas';}
+ // a card may only be judged AFTER its answer was seen - otherwise "Moku" spam advances the Leitner boxes
+ // and inflates the learned count without a single retrieval (2026-09-09 review, round 2)
+ function judge(ok){if(cur===null)return;if(!flipped){flip();return;}const s=st[cur]||{box:0,seen:0};s.box=ok?Math.min(s.box+1,INT.length-1):0;s.seen=(s.seen||0)+1;s.due=now()+INT[s.box];st[cur]=s;try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}pick();}
+ card.onclick=flip;$('yes').onclick=()=>judge(true);$('no').onclick=()=>judge(false);
+ $('resetDeck').onclick=()=>{st={};try{localStorage.removeItem(KEY)}catch(e){}forceAll=false;pick();};
+ $('allDue').onclick=()=>{forceAll=!forceAll;$('allDue').textContent=forceAll?'Tik laukiančias':'Kartoti visas';pick();};
+ document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key===' '&&document.activeElement===card){e.preventDefault();flip();}else if(e.key==='1')judge(false);else if(e.key==='2')judge(true);});
+ pick();
+}
+
+// ---------- quiz ----------
+const quiz=$('quiz');
+if(quiz){
+ const res={};
+ const norm=(s)=>s.toLowerCase().trim().replace(/\s+/g,' ');
+ function score(){const n=Object.keys(res).length,ok=Object.values(res).filter(Boolean).length;document.querySelector('#score span').textContent=`Atsakyta ${n} iš ${T.length} · teisingai ${ok}`+(n===T.length?` · ${Math.round(ok/T.length*100)} %`:'');}
+ function renderT(only){quiz.innerHTML='';T.forEach((t,i)=>{if(only&&res[i]===true)return;const d=document.createElement('div');d.className='qq';d.innerHTML=`<div class="stem">${i+1}. ${t.s}</div>`;
+  const fb=document.createElement('div');fb.className='fb';
+  if(t.o){const g=document.createElement('div');g.className='opts';t.o.forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=o;b.onclick=()=>{if(d.dataset.done)return;d.dataset.done=1;const ok=j===t.r;res[i]=ok;b.classList.add(ok?'right':'wrong');if(!ok)g.children[t.r].classList.add('right');fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'Teisingai. ':'Neteisingai. ')+t.e;score();};g.appendChild(b);});d.appendChild(g);}
+  else{const inp=document.createElement('input');inp.placeholder=t.ph||'rašyk lietuviškai';const b=document.createElement('button');b.className='btn';b.textContent='Tikrinti';b.style.marginLeft='8px';b.onclick=()=>{if(d.dataset.done)return;const ok=t.t.map(norm).includes(norm(inp.value));d.dataset.done=1;res[i]=ok;fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'Teisingai. ':'Neteisingai – teisinga: '+t.t[0]+'. ')+t.e;score();};inp.addEventListener('keydown',e=>{if(e.key==='Enter')b.click();});d.appendChild(inp);d.appendChild(b);}
+  d.appendChild(fb);quiz.appendChild(d);});}
+ $('retry').onclick=()=>{for(const k in res)if(res[k]!==true)delete res[k];renderT(true);score();};
+ renderT(false);score();
+}
+
+// ---------- rask klaida (erroneous worked examples) ----------
+(function(){const box=$('mistakes');if(!box||!M.length)return;
+ if(!window.Board){box.innerHTML=M.map(m=>`<div class="mk"><div class="mk-h"><span>${esc(m.s)}</span></div><p>${m.e}</p>${m.tip?`<p>${m.tip}</p>`:''}</div>`).join('');return;}
+ box.innerHTML=M.map((m,i)=>`<div class="mk"><div class="mk-h">${m.t?`<span class="chip">${esc(m.t)}</span>`:''}<span>${esc(m.s)}</span></div><div data-mk="${i}"></div></div>`).join('');
+ box.querySelectorAll('[data-mk]').forEach(el=>Board.mistake(el,M[+el.dataset.mk]));})();
+
+// ---------- practice drill (spresk pats) ----------
+const pBox=$('practice');
+if(pBox){
+ const PKEY=KEY+'-practice';
+ let pst={};try{pst=JSON.parse(localStorage.getItem(PKEY)||'{}')}catch(e){pst={}}
+ let pi=-1,pShown=false,pOk=0,pDone=0;
+ const save=()=>{try{localStorage.setItem(PKEY,JSON.stringify(pst))}catch(e){}};
+ function pickP(){const best=P.map((x,i)=>i).sort((a,b)=>((pst[a]&&pst[a].ok)||0)-((pst[b]&&pst[b].ok)||0)||Math.random()-0.5);
+  const pool=best.slice(0,Math.max(3,Math.ceil(P.length/3)));return pool[Math.floor(Math.random()*pool.length)];}
+ function pRender(){const x=P[pi];const s=pst[pi]||{ok:0,no:0};
+  pBox.innerHTML=`<div class="pos">Užduotis ${pDone+1} · šioje temoje ${P.length} užduotys · išspręsta iš pirmo karto ${pOk}${x.t?' · '+esc(x.t):''}${s.ok?` · šią mokei ${s.ok} k.`:''}</div>`
+   +`<div class="qt" style="font-family:var(--serif);font-size:1.2rem;margin:.5rem 0 .3rem">${x.q}</div>`
+   +(x.hint?`<div class="fb" id="pHintBox" hidden>💡 ${x.hint}</div>`:'')
+   +`<div class="tools" style="margin:.6rem 0 0">${x.hint?'<button class="btn" id="pHint">Užuomina</button>':''}<button class="btn primary" id="pShow">Rodyti sprendimą</button></div>`
+   +`<div id="pAns" hidden>${x.board&&window.Board?'<div id="pBd"></div><details class="asum"><summary>Atsakymas</summary><div class="fml">'+x.a+'</div></details>':'<div class="fml">'+x.a+'</div>'}${!(x.board&&window.Board)&&x.st&&x.st.length?`<ol class="steps">${x.st.map(y=>`<li>${y}</li>`).join('')}</ol>`:''}`
+   +`<div class="judge"><button class="btn no" id="pNo">Nemokėjau</button><button class="btn yes" id="pYes">Mokėjau</button></div></div>`;
+  if(x.hint)$('pHint').onclick=()=>{$('pHintBox').hidden=false;};
+  $('pShow').onclick=()=>{$('pAns').hidden=false;$('pShow').hidden=true;pShown=true;if(x.board&&window.Board)Board.mount($('pBd'),x.board,{level:s.ok>=2?2:s.ok>=1?1:0});};
+  const judge=(ok)=>{const s2=pst[pi]||{ok:0,no:0};if(ok)s2.ok++;else s2.no++;pst[pi]=s2;save();pDone++;if(ok)pOk++;pi=pickP();pShown=false;pRender();};
+  $('pYes').onclick=()=>judge(true);$('pNo').onclick=()=>judge(false);}
+ $('pNext').onclick=()=>{pi=pickP();pRender();};
+ pi=pickP();pRender();
+}
+
+// ---------- exam track ----------
+const vList=$('vList');
+if(vList){
+ const vCount=$('vCount'),fY=$('fYear'),fF=$('fForm'),fS=$('fSub');
+ const subRoom=(s)=>SUBROOM[s]===undefined?0:SUBROOM[s];
+ const vbeHead=(x)=>`${x.year} · ${x.session} · ${x.part==='vienas egzaminas'?'vienas egzaminas':x.part+' dalis'} · ${esc(x.number)} · ${x.points} t.`;
+ const roomChip=(x)=>ROOMS.length?`<button class="chip room" data-r="${subRoom(x.subtopic)}">🚪 ${esc(roomName(subRoom(x.subtopic)))}</button>`:'';
+ (function(){const rk={};VBE.forEach(x=>{if(!rk[x.subtopic])rk[x.subtopic]={p:0,n:0};rk[x.subtopic].p+=x.points;rk[x.subtopic].n++;});
+  const rows=Object.keys(rk).map(k=>[k,rk[k]]).sort((a,b)=>b[1].p-a[1].p||b[1].n-a[1].n);if(!rows.length)return;const mx=rows[0][1].p;
+  $('vbeRank').innerHTML=rows.map(r=>`<div class="row"><span class="nm">${esc(r[0])}</span><span class="tr"><i style="width:${Math.round(r[1].p/mx*100)}%"></i></span><span class="vl">${r[1].p} t. · ${r[1].n} užd.</span></div>`).join('');})();
+ function vbeFill(sel,label,vals){sel.innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');}
+ vbeFill(fY,'Visi metai',[...new Set(VBE.map(x=>x.year))].sort((a,b)=>b-a));
+ vbeFill(fF,'Visos formos',[...new Set(VBE.map(x=>x.form))].sort((a,b)=>a.localeCompare(b,'lt')));
+ vbeFill(fS,'Visos potemės',[...new Set(VBE.map(x=>x.subtopic))].sort((a,b)=>a.localeCompare(b,'lt')));
+ function vbeCard(x,i){return `<div class="vc" data-i="${i}"><div class="hd">${vbeHead(x)}</div>`
+  +`<div><span class="chip">${esc(x.form)}</span><span class="chip">${esc(x.subtopic)}</span></div>`
+  +`<div class="qt">${esc(x.question)}</div>`
+  +`<div class="rev"><button class="btn vrev">Rodyti atsakymą</button></div>`
+  +`<div class="ans">${!x.answer||/nepublikuot/i.test(x.answer)?'<span class="noans">Vertinimo instrukcija nepublikuota.</span>':esc(x.answer)}</div>`
+  +`<div class="mem">${roomChip(x)}<div class="why" style="font-size:.85rem;color:var(--ink2)">Šaltinis: ${esc(x.source||'')}</div></div></div>`;}
+ function renderV(){const y=fY.value,f=fF.value,s=fS.value;
+  const sel=VBE.map((x,i)=>[x,i]).filter(p=>(!y||String(p[0].year)===y)&&(!f||p[0].form===f)&&(!s||p[0].subtopic===s));
+  vList.innerHTML=sel.map(p=>vbeCard(p[0],p[1])).join('')||'<p class="intro">Su tokiais filtrais užduočių nėra.</p>';
+  vCount.textContent=`${sel.length} užd. · ${sel.reduce((a,p)=>a+p[0].points,0)} t.`;}
+ vList.addEventListener('click',e=>{const rm=e.target.closest('.chip.room');if(rm){goRoom(+rm.dataset.r);return;}
+  const b=e.target.closest('.vrev');if(!b)return;const c=b.closest('.vc');const o=c.classList.toggle('open');b.textContent=o?'Slėpti atsakymą':'Rodyti atsakymą';});
+ [fY,fF,fS].forEach(s=>s.onchange=renderV);
+ $('fClear').onclick=()=>{fY.value='';fF.value='';fS.value='';renderV();};
+ renderV();
+ const tBox=$('vTrain');let tSet=[],tIdx=0,tOk=0;
+ function pick5(){const pool=VBE.map((x,i)=>i).filter(i=>VBE[i].answer&&!/nepublikuot/i.test(VBE[i].answer)),out=[];let w=pool.map(i=>VBE[i].points||1);
+  for(let k=0;k<5&&pool.length;k++){let tot=w.reduce((a,b)=>a+b,0),r=Math.random()*tot,j=0;while(j<pool.length-1&&(r-=w[j])>0)j++;out.push(pool[j]);pool.splice(j,1);w.splice(j,1);}
+  return out;}
+ function tRender(){if(tIdx>=tSet.length){tBox.innerHTML=`<h3 style="margin:0">Rezultatas: ${tOk} iš ${tSet.length}</h3><p class="intro" style="margin:.4rem 0 .8rem">${tOk===tSet.length?'Visos mokamos. Grįžk po 3 dienų.':'Nemokėtas potemes pasižymėk ir pakartok jų korteles.'}</p><button class="btn primary" id="vTrainAgain">Dar kartą</button>`;$('vTrainAgain').onclick=startTrain;return;}
+  const x=VBE[tSet[tIdx]];
+  tBox.innerHTML=`<div class="pos">Užduotis ${tIdx+1} iš ${tSet.length} · teisingai ${tOk}</div>`
+   +`<div class="hd" style="font-family:var(--serif);font-weight:700;font-size:1.02rem;color:var(--acc-ink);margin-top:4px">${vbeHead(x)}</div>`
+   +`<div><span class="chip">${esc(x.form)}</span><span class="chip">${esc(x.subtopic)}</span>${roomChip(x)}</div>`
+   +`<div class="qt" style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:.55rem">${esc(x.question)}</div>`
+   +`<div class="rev"><button class="btn" id="tRev">Rodyti atsakymą</button></div>`
+   +`<div class="ans" id="tAns" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.answer||'')}</div>`
+   +`<div class="judge"><button class="btn no" id="tNo">Nemokėjau</button><button class="btn yes" id="tYes">Mokėjau</button></div>`;
+  tBox.querySelector('#tRev').onclick=function(){tBox.querySelector('#tAns').style.display='block';this.style.display='none';};
+  const rm=tBox.querySelector('.chip.room');if(rm)rm.onclick=()=>goRoom(+rm.dataset.r);
+  tBox.querySelector('#tYes').onclick=()=>{tOk++;tIdx++;tRender();};
+  tBox.querySelector('#tNo').onclick=()=>{tIdx++;tRender();};}
+ function startTrain(){tSet=pick5();tIdx=0;tOk=0;tBox.hidden=false;tRender();}
+ $('vTrainStart').onclick=startTrain;
+}
+})();
+</script>

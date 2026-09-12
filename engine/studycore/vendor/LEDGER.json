@@ -1,0 +1,75 @@
+{
+ "version": "2026.09.12",
+ "files": {
+  "plan.py": {
+   "sha": "e4b4cbd32a44336e",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "units.py": {
+   "sha": "efa13f8eafbe3ca8",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "material.py": {
+   "sha": "5419a5b2456e5f26",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "calc.py": {
+   "sha": "b15ae3cb9a1b22bb",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "boardcheck.py": {
+   "sha": "d0c25b18b41db20c",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "extract.py": {
+   "sha": "69d384ff7684ed35",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "video.py": {
+   "sha": "0227e28ce2c9d36a",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "topic.py": {
+   "sha": "a9acdcacb1e71053",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "board.js": {
+   "sha": "a7da452a0e3509e2",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "board.css": {
+   "sha": "512c70b0c2cfe837",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "planas.template.html": {
+   "sha": "ff6f1031a58270fc",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "topic.template.html": {
+   "sha": "dd0d3609440dff06",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "test_plan.py": {
+   "sha": "f2927a57cda11044",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  },
+  "test_material.py": {
+   "sha": "b6bcf8298658fbbd",
+   "copiedAt": "2026-09-12T23:04:40",
+   "manifest": "2026.09.12"
+  }
+ }
+}

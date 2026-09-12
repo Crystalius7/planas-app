@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Planas connector (works with Moodle™)",
+  "description": "Collects your own courses, deadlines and new material from the Moodle site you are already logged into and hands them to the Planas study app on your computer. Never sees your password.",
+  "version": "0.1.0",
+  "minimum_chrome_version": "116",
+  "permissions": ["storage", "activeTab", "scripting", "alarms", "webRequest"],
+  "optional_host_permissions": ["https://*/*"],
+  "host_permissions": [],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_popup": "popup.html", "default_title": "Planas connector" },
+  "icons": { "128": "icon128.png" },
+  "browser_specific_settings": { "gecko": { "id": "planas-connector@example.invalid", "strict_min_version": "121.0" } }
+}
